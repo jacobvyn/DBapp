@@ -4,87 +4,87 @@ import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import training.modelGroup.MyDBDriver;
 import training.viewGroup.ModalWindows.ChangeModalWindow;
+import training.viewGroup.ModalWindows.InputErrorModalWindow;
 
 public class ChangeWinOkButtonListener implements ActionListener {
-	ChangeModalWindow window;
+	ChangeModalWindow parentsWindow;
 
 	public ChangeWinOkButtonListener(ChangeModalWindow window) {
-		this.window = window;
+		this.parentsWindow = window;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+
 		String firstName = "FIRSTNAME";
 		String lastName = "LASTNAME";
 		String birthDay = "BIRTH_DAY";
 		String job = "JOB";
 		String comment = "COMMENT";
-		
-		//String [] fields = {firstName, lastName, birthDay, job, comment};
-		
+
+		String firstNameVal = parentsWindow.getNameTextField().getText();
+		String lastNameVal = parentsWindow.getLastNameTextField().getText();
+		String birthDayVal = parentsWindow.getBirthDayTextField().getText();
+		String jobVal = parentsWindow.getJobTextField().getText();
+		String commentVal = parentsWindow.getCommentTextField().getText();
+
 		ArrayList<String> fieldsList = new ArrayList<String>();
-		fieldsList.add(firstName);
-		fieldsList.add(lastName);
-		
-		
-	
-		String firstNameVal = window.getNameTextField().getText();
-		String lastNameVal = window.getLastNameTextField().getText();
-		String birthDayVal = window.getBirthDayTextField().getText();
-		String jobVal =window.getJobTextField().getText();
-		String commentVal = window.getCommentTextField().getText();
-		 
-		 if (lastNameVal.length()==0) lastName="";
-		
-		 if (jobVal.length()==0) job="";
-		 if (commentVal.length()==0) comment="";
-		
-		
-		//String [] values ={firstName, lastName, birthDay,job, comment};
-		
-		 ArrayList<String> valuesList = new ArrayList<String>();
-		 valuesList.add(firstNameVal);
-		 valuesList.add(lastNameVal);
-		 if (birthDayVal.length()!=0){
-			 valuesList.add(birthDayVal);
-			 fieldsList.add(birthDay);
-		 }
-		 valuesList.add(jobVal);
-		 valuesList.add(commentVal);
-		 
-		 fieldsList.add(job);
-			fieldsList.add(comment);
-		
-		if (birthDayVal.length()==0){
-			fieldsList.remove(birthDay);
-			valuesList.remove(birthDayVal);
-			
+		ArrayList<String> valuesList = new ArrayList<String>();
+
+		if (!firstNameVal.equals(parentsWindow.getPrevName())) {
+			fieldsList.add(firstName);
+			valuesList.add(firstNameVal);
 		}
-		
-		/*
-		//------------
-				for (int i = 0; i < fieldsList.size(); i++) {
-					System.out.println( fieldsList.get(i));
-					
-				}
-				
-				
-		//-------------
-		*/
-		
-		int user_id = window.getFace().getSelectedUserId();
-		
-		MyDBDriver md = new MyDBDriver();
-		md.updateRecord(fieldsList, valuesList, user_id);
-		md.releaseResources();
-		
-		window.getFace().getTableModel().refreshDataList();
-		window.getFace().repaint();
-		window.getChangeDialog().setVisible(false);
+
+		if (!lastNameVal.equals(parentsWindow.getPrevLastname())) {
+			fieldsList.add(lastName);
+			valuesList.add(lastNameVal);
+		}
+
+		if (!jobVal.equals(parentsWindow.getPrevJob())) {
+			fieldsList.add(job);
+			valuesList.add(jobVal);
+		}
+
+		if (!commentVal.equals(parentsWindow.getPrevComment())) {
+			fieldsList.add(comment);
+			valuesList.add(commentVal);
+		}
+
+		if (birthDayVal.length() != 0
+				&& (AddWinOKButtonListener.checkDateFormat(birthDayVal, "/")
+						|| AddWinOKButtonListener.checkDateFormat(birthDayVal, "-"))
+				&& !birthDayVal.equals(parentsWindow.getPrevBday())) {
+			valuesList.add(birthDayVal);
+			fieldsList.add(birthDay);
+		}
+
+		if (!fieldsList.isEmpty()) {
+			System.out.println(birthDayVal);
+			System.out.println("Next fields were changed");
+			for (String s : fieldsList) {
+				System.out.println(s);
+			}
+
+			int user_id = parentsWindow.getFace().getSelectedUserId();
+
+			MyDBDriver mcDrive = new MyDBDriver();
+			mcDrive.updateRecord(fieldsList, valuesList, user_id);
+			mcDrive.releaseResources();
+
+			parentsWindow.getFace().getTableModel().refreshDataList();
+			parentsWindow.getFace().repaint();
+
+		}
+
+		if (birthDayVal.length() != 0 && !AddWinOKButtonListener.checkDateFormat(birthDayVal, "/")
+				&& !AddWinOKButtonListener.checkDateFormat(birthDayVal, "-")) {
+			new InputErrorModalWindow(parentsWindow.getChangeDialog());
+		}
+
+		parentsWindow.getChangeDialog().setVisible(false);
 
 	}
 

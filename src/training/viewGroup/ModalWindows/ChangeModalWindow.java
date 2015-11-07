@@ -18,30 +18,42 @@ import training.viewGroup.listeners.ChangeWinOkButtonListener;
 import training.viewGroup.listeners.MyCaretListener;
 
 public class ChangeModalWindow {
-	FaceOfApp face;
+	private FaceOfApp face;
 	
 
-	JDialog changeDialog;
+	private JDialog changeDialog;
 	
-	JButton okButton;
-	JButton cancelButton;
+	private JButton okButton;
+	private JButton cancelButton;
 	
-	JLabel nameLabel;
-	JLabel lastNameLabel;
-	JLabel birthDayLabel;
-	JLabel jobLabel;
-	JLabel commentLabel;
+	private JLabel nameLabel;
+	private JLabel lastNameLabel;
+	private JLabel birthDayLabel;
+	private JLabel jobLabel;
 	
-	JLabel status;
+
+	private JLabel commentLabel;
 	
-	JTextField nameTextField;
-	JTextField lastNameTextField;
-	JTextField birthDayTextField;
-	JTextField jobTextField;
-	JTextField commentTextField;
+	private JLabel status;
+	
+	private JTextField nameTextField;
+	private JTextField lastNameTextField;
+	private JTextField birthDayTextField;
+	private JTextField jobTextField;
+	private JTextField commentTextField;
 	
 	String [] selectedPersonTochange;
+	
+	///**** previous values to check changes
 
+	private String prevName;
+	private String prevLastname;
+	private String prevBday;
+	private String prevJob;
+	private String prevComment;
+	
+	//*******
+	
 	public ChangeModalWindow(FaceOfApp face) {
 		this.face = face;
 		
@@ -57,7 +69,7 @@ public class ChangeModalWindow {
 		changeDialog.pack();
 	}
 
-	private void makeLabelsButtonsAndTextFields() {
+	private void makeLabelsButtonsAndTextFields() { //and set them
 		nameLabel = new JLabel("Name");
 		lastNameLabel = new JLabel("Lastname");
 		birthDayLabel = new JLabel("Birth Day");
@@ -68,24 +80,24 @@ public class ChangeModalWindow {
 		cancelButton = new JButton("Cancel");
 
 		nameTextField = new JTextField(25);
-		String name = selectedPersonTochange[1];
-		nameTextField.setText(name);
+		prevName = selectedPersonTochange[1];
+		nameTextField.setText(prevName);
 		
 		lastNameTextField = new JTextField(10);
-		String lastname = selectedPersonTochange[2];
-		lastNameTextField.setText(lastname);
+		prevLastname = selectedPersonTochange[2];
+		lastNameTextField.setText(prevLastname);
 		
 		birthDayTextField = new JTextField(10);
-		String bday = selectedPersonTochange[3];
-		birthDayTextField.setText(bday);
+		prevBday = selectedPersonTochange[3];
+		birthDayTextField.setText(prevBday);
 		
 		jobTextField = new JTextField(10);
-		String job = selectedPersonTochange[4];
-		jobTextField.setText(job);
+		prevJob = selectedPersonTochange[4];
+		jobTextField.setText(prevJob);
 		
 		commentTextField = new JTextField(20);
-		String comment = selectedPersonTochange[5];
-		commentTextField.setText(comment);
+		prevComment = selectedPersonTochange[5];
+		commentTextField.setText(prevComment);
 		
 		
 		status = new JLabel("Status : clear");
@@ -161,6 +173,26 @@ public class ChangeModalWindow {
 	
 	public FaceOfApp getFace() {
 		return face;
+	}
+	
+	public String getPrevName() {
+		return prevName;
+	}
+
+	public String getPrevLastname() {
+		return prevLastname;
+	}
+
+	public String getPrevBday() {
+		return prevBday;
+	}
+
+	public String getPrevJob() {
+		return prevJob;
+	}
+
+	public String getPrevComment() {
+		return prevComment;
 	}
 
 	

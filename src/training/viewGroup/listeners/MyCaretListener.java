@@ -26,7 +26,7 @@ public class MyCaretListener implements CaretListener {
 			status.setText("Status : clear");
 		} else  {
 			status.setForeground(Color.red);
-			status.setText("Status : format of the date has to be \"mm-dd-yyyy\" or \"/mm/dd/yyyy\"  ");
+			status.setText("Status : format of the date has to be \"dd-mm-yyyy\" or \"dd/mm/yyyy\"  ");
 			
 		}
 	}
