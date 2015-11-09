@@ -78,7 +78,7 @@ public class MyDBDriver {
 				DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 				String b_day = df.format(rs.getDate("birth_day"));
 				jDB.addProperty("BIRTH_DAY", b_day);
-
+				
 				jDB.addProperty("JOB", rs.getString("job"));
 				jDB.addProperty("COMMENT", rs.getString("comment"));
 				jArray.add(jDB);
