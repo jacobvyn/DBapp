@@ -74,7 +74,6 @@ public class ChangeWinOkButtonListener implements ActionListener {
 			mcDrive.updateRecord(fieldsList, valuesList, user_id);
 			mcDrive.releaseResources();
 
-			parentsWindow.getFace().getTableModel().refreshDataList();
 			parentsWindow.getFace().repaint();
 
 		}

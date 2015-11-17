@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -25,13 +26,17 @@ public class FaceOfApp extends JFrame {
 	private JButton change;
 	private JButton del;
 	private JButton exit;
+	private JLabel countOfRecords;
 
 	private int selectedUserId;
 	private int selecteRow;
 
 	private MyTableModel tableModel;
 	private JTable table;
+	
 
+
+	
 	public FaceOfApp() {
 		super("My first internet-application");
 		this.setSize(500, 600);
@@ -48,7 +53,6 @@ public class FaceOfApp extends JFrame {
 	private void makeTable() {
 
 		tableModel = new MyTableModel();
-		//tableModel.addDataToTable();
 		tableModel.fillTheTable();
 		
 		table = new JTable(tableModel);
@@ -69,11 +73,15 @@ public class FaceOfApp extends JFrame {
 		change = new JButton("Change");
 		del = new JButton("Delete");
 		exit = new JButton("Exit");
+		countOfRecords = new JLabel();
 
 		change.addActionListener(new FaceWinChangeButtonListener(this));
 		add.addActionListener(new FaceWinAddButtonListener(this));
 		del.addActionListener(new FaceWinDeLButtonListener(this));
+	
 
+		countOfRecords.setText("Records : " +tableModel.getRowCount());
+		
 		JPanel panelButtons = new JPanel();
 		panelButtons.setLayout(new FlowLayout());
 
@@ -81,7 +89,7 @@ public class FaceOfApp extends JFrame {
 		panelButtons.add(change);
 		panelButtons.add(del);
 		panelButtons.add(exit);
-
+		panelButtons.add(countOfRecords);
 		this.add(panelButtons, BorderLayout.SOUTH);
 
 		exit.addActionListener(new ActionListener() {
@@ -130,6 +138,15 @@ public class FaceOfApp extends JFrame {
 	public int getSelecteRow() {
 		return selecteRow;
 	}
+	
+	@Override
+	public void repaint() {
+		tableModel.refreshDataList();
+		countOfRecords.setText("Records : " +tableModel.getRowCount());
+		super.repaint();
+	}
+	
+	
 
 	// ===========================================================================================================================
 	public static void main(String[] args) {

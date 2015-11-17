@@ -1,7 +1,6 @@
 package training.viewGroup.ModalWindows;
 
 import java.awt.FlowLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,7 +15,6 @@ public class InputErrorModalWindow {
 	JButton ok;
 	JLabel msg;
 
-	// JLabel msg2;
 	public InputErrorModalWindow(JDialog parent) {
 		this.parent = parent;
 		errorWindow = new JDialog(parent, "Input Error", true);
@@ -24,11 +22,9 @@ public class InputErrorModalWindow {
 		errorWindow.setLayout(new FlowLayout());
 
 		msg = new JLabel("You have made a mistake while inputing a \"date\". ");
-		// msg2 = new JLabel("The record will be put to the databse without
-		// field \"date\" ");
+
 		ok = new JButton("OK");
 		errorWindow.add(msg);
-		// errorWindow.add(msg2);
 		errorWindow.add(ok);
 		ok.addActionListener(new ActionListener() {
 

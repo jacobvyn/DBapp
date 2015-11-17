@@ -6,17 +6,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 public class TestingServ {
 
@@ -37,6 +29,7 @@ public class TestingServ {
 			}
 			
 			JSONArray arr = new JSONArray(jString);
+			System.out.println(arr);
 	
 
 		} catch (MalformedURLException e) {

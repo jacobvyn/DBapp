@@ -1,13 +1,6 @@
 package training.viewGroup;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.ResultSet;
-
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import training.modelGroup.MyDBDriver;
+import training.viewGroup.helper.ServletsCommunication;
 
 public class MyTableModel extends AbstractTableModel {
 
@@ -82,46 +76,12 @@ public class MyTableModel extends AbstractTableModel {
 
 	public void refreshDataList() {
 		dataList.clear();
-		//addDataToTable();
 		fillTheTable();
 	}
 
 
-	public JSONArray getDataFromDB() {
-
-		try {
-			URL url = new URL("http://localhost:8080/DBServlet/dbUpdate");
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-			String jString = "";
-			String c;
-
-			while ((c = rd.readLine()) != null) {
-				jString += c;
-			}
-
-			JSONArray jsonArr = new JSONArray(jString);
-
-			return jsonArr;
-
-		} catch (MalformedURLException e) {
-			System.out.println("Something bad with URL");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("IOException ");
-			e.printStackTrace();
-		} catch (JSONException e) {
-			System.out.println("Exception by creating JsonArray, source string is bad");
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-	
-	
 	public void fillTheTable () {
-		JSONArray jArray=getDataFromDB();
+		JSONArray jArray=ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
 		if (jArray !=null){
 			try {
 				for (int i = 0; i < jArray.length(); i++) {

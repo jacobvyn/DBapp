@@ -1,21 +1,17 @@
 package training.viewGroup.listeners;
 
 import java.awt.event.ActionEvent;
-
-
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/*
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-*/
-import training.modelGroup.MyDBDriver;
-import training.viewGroup.ModalWindows.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import training.viewGroup.ModalWindows.AddModalWindow;
+import training.viewGroup.ModalWindows.InputErrorModalWindow;
+import training.viewGroup.helper.ServletsCommunication;
 
 public class AddWinOKButtonListener implements ActionListener {
 	AddModalWindow parentsWindow;
@@ -30,55 +26,52 @@ public class AddWinOKButtonListener implements ActionListener {
 		String firstName = parentsWindow.getNameTextField().getText();
 		String lastName = parentsWindow.getLastNameTextField().getText();
 		String birthDay = parentsWindow.getBirthDayTextField().getText();
-		
 		String job = parentsWindow.getJobTextField().getText();
 		String comment = parentsWindow.getCommentTextField().getText();
 
-		MyDBDriver md = new MyDBDriver();
-		
-		if (checkDateFormat(birthDay, "/")  || checkDateFormat(birthDay, "-") ) {
-			md.addRecord(firstName, lastName, birthDay, job, comment);
-		} 
-	/*	else if (birthDay.length() == 0) {
-			md.addRecord(firstName, lastName, job, comment);
-		}*/
-		else {
-			md.addRecord(firstName, lastName, job, comment);
+		JSONObject addJObject = new JSONObject();
+
+		try {
+			addJObject.put("firstName", firstName);
+			addJObject.put("lastName", lastName);
+			addJObject.put("birth_Day", birthDay);
+			addJObject.put("job", job);
+			addJObject.put("comment", comment);
+
+		} catch (JSONException e) {
+			System.out.println("Something wrong by creating addQuery string (AddWinOKButtonListener)");
+			e.printStackTrace();
+		}
+
+		if (checkDateFormat(birthDay, "/") || checkDateFormat(birthDay, "-")) {
+			ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
+		} else {
+			addJObject.remove("birth_Day");
+			ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
 			new InputErrorModalWindow(parentsWindow.getAddDialog());
 		}
 
-		md.releaseResources();
-
-		parentsWindow.getFace().getTableModel().refreshDataList();
 		parentsWindow.getFace().repaint();
 		parentsWindow.getAddDialog().setVisible(false);
 
 	}
-/*
-	public static boolean checkDateFormat(String date, String separator) {
 
-		if (date.matches("([0-9]{2})"+separator +"([0-9]{2})"+separator +"([0-9]{4})") ) {
-			return true;
+	public static boolean checkDateFormat(String value, String separator) {
+
+		String format = "dd" + separator + "mm" + separator + "yyyy";
+
+		Date date = null;
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			date = sdf.parse(value);
+			if (!value.equals(sdf.format(date))) {
+				date = null;
+
+			}
+		} catch (ParseException ex) {
+			// ex.printStackTrace();
 		}
-		return false;
-	} 
-	*/
-	 public static boolean checkDateFormat(String value, String separator) {
-		 
-		 String format="dd" +separator +"mm" +separator +"yyyy";
-		 
-	        Date date = null;
-	        try {
-	            SimpleDateFormat sdf = new SimpleDateFormat(format);
-	            date = sdf.parse(value);
-	            if (!value.equals(sdf.format(date))) {
-	                date = null;
-	                
-	            } 
-	        } catch (ParseException ex) {
-	           // ex.printStackTrace();
-	        }
-	        return date != null;
-	    }
+		return date != null;
+	}
 
 }
