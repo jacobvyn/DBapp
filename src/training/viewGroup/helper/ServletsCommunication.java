@@ -76,7 +76,7 @@ public class ServletsCommunication {
 
 	}
 
-	// проверочный метод
+	// checking method
 
 	public static String getStringfromServlet(String url) {
 		String jString = "";
