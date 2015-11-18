@@ -1,6 +1,7 @@
 package training.viewGroup.listeners;
 
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,9 +10,10 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import training.modelGroup.ServletsCommunication;
 import training.viewGroup.ModalWindows.AddModalWindow;
 import training.viewGroup.ModalWindows.InputErrorModalWindow;
-import training.viewGroup.helper.ServletsCommunication;
+
 
 public class AddWinOKButtonListener implements ActionListener {
 	AddModalWindow parentsWindow;

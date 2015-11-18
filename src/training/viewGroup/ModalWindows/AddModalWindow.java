@@ -40,7 +40,7 @@ public class AddModalWindow {
 
 	public AddModalWindow(FaceOfApp face) {
 		this.face = face;
-		addDialog = new JDialog(face, "Geben Sie bitte eine Persone ein!", true);
+		addDialog = new JDialog(face, "Enter information about the person", true);
 		addDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addDialog.setLayout(new GridBagLayout());
 		addDialog.setSize(450, 250);

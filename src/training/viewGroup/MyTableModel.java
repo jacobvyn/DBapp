@@ -1,6 +1,7 @@
 package training.viewGroup;
 
 import java.sql.ResultSet;
+
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,7 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import training.modelGroup.MyDBDriver;
-import training.viewGroup.helper.ServletsCommunication;
+import training.modelGroup.ServletsCommunication;
+
 
 public class MyTableModel extends AbstractTableModel {
 

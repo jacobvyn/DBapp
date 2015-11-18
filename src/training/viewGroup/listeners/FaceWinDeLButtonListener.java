@@ -2,11 +2,13 @@ package training.viewGroup.listeners;
 
 import java.awt.event.ActionEvent;
 
+
 import java.awt.event.ActionListener;
 
 import training.modelGroup.MyDBDriver;
+import training.modelGroup.ServletsCommunication;
 import training.viewGroup.FaceOfApp;
-import training.viewGroup.helper.ServletsCommunication;
+
 
 public class FaceWinDeLButtonListener implements ActionListener {
 
@@ -26,8 +28,9 @@ public class FaceWinDeLButtonListener implements ActionListener {
 		drive.releaseResources();
 		System.out.println("ID #" +(face.getSelectedUserId()) +" is deleted");
 		face.setSelectedUserIdAndRow();
+		
 		/////// to delete!!!
-		System.out.println(ServletsCommunication.getStringfromServlet(ServletsCommunication.CHANGE_URL));
+		System.out.println("was received by DEL: "+ServletsCommunication.getStringfromServlet(ServletsCommunication.DELETE_URL));
 		
 
 	}

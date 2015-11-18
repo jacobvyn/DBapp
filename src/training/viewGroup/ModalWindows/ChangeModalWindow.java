@@ -59,7 +59,7 @@ public class ChangeModalWindow {
 		
 		selectedPersonTochange=face.getSelectedPerson();
 		
-		changeDialog = new JDialog(face, "Geben Sie bitte neue Information ein!", true);
+		changeDialog = new JDialog(face, "Enter information that you would like to change", true);
 		changeDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		changeDialog.setLayout(new GridBagLayout());
 		changeDialog.setSize(450, 250);
