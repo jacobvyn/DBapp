@@ -4,10 +4,10 @@ import java.io.BufferedReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import org.json.JSONArray;
@@ -16,35 +16,36 @@ import org.json.JSONObject;
 
 public class ServletsCommunication {
 
-	public static final String ADD_URL = "http://localhost:8080/DBServlet/dbAdd";
-	public static final String CHANGE_URL = "http://localhost:8080/DBServlet/dbChange";
-	public static final String DELETE_URL = "http://localhost:8080/DBServlet/dbDelete";
-	public static final String GET_DATA_URL = "http://localhost:8080/DBServlet/dbGetData";
+	public static final String HOST_AND_PORT = "http://localhost:8080";
+	public static final String ADD_URL = HOST_AND_PORT + "/DBServlet/dbAdd";
+	public static final String CHANGE_URL = HOST_AND_PORT + "/DBServlet/dbChange";
+	public static final String DELETE_URL = HOST_AND_PORT + "/DBServlet/dbDelete";
+	public static final String GET_DATA_URL = HOST_AND_PORT + "/DBServlet/dbGetData";
 
 	public static void makeQueryByURL(String url, JSONObject jObject) {
 		try {
-			URL serverURL = new URL(url);
+			String totalQuery = url + makeQueryFromObject(jObject);
+			
+			
+			URL serverURL = new URL(totalQuery);
+			
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
-
-			connect.setRequestMethod("POST");
 			connect.setDoOutput(true);
+			connect.setRequestProperty("charset", "UTF-8");
 			connect.setRequestProperty("Content-Type", "application/json");
-			connect.setRequestProperty("charset", "UTF_8");
-			int postDataLength = jObject.length();
-			connect.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-
-			System.out.println("Request from appl :" + jObject);
-
+			
 			OutputStream out = connect.getOutputStream();
-
-			out.write(jObject.toString().getBytes());
+			out.write(jObject.toString().getBytes("UTF-8"));
 			out.close();
 
+			System.out.println("App: Next query was send : " + totalQuery);
+			System.out.println("App: received from servlet : " + ServletsCommunication.getStringfromServlet(ADD_URL));
+
 		} catch (MalformedURLException e) {
-			System.out.println("Bad url  (AddWinOKButtonListener)");
+			System.out.println("Bad url  (ServletsCommunication.makeQueryByURL)");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Exception by opening Connection (AddWinOKButtonListener)");
+			System.out.println("Exception by opening Connection (ServletsCommunication.makeQueryByURL)");
 			e.printStackTrace();
 		}
 	}
@@ -57,16 +58,15 @@ public class ServletsCommunication {
 			connection.setDoInput(true);
 			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-			String jString = "";
+			StringBuilder jString = new StringBuilder();
 			String c;
 
 			while ((c = br.readLine()) != null) {
-				jString += c;
+				jString.append(c);
 			}
 			br.close();
 
-			JSONArray jsonArr = new JSONArray(jString);
-
+			JSONArray jsonArr = new JSONArray(jString.toString());
 			return jsonArr;
 
 		} catch (MalformedURLException e) {
@@ -112,13 +112,60 @@ public class ServletsCommunication {
 		return null;
 
 	}
-	
-	
 
+	private static String makeQueryFromObject(JSONObject jObject) {
+		StringBuilder query = new StringBuilder();
+		query.append("?");
+		String[] names = JSONObject.getNames(jObject);
+
+		try {
+			for (String key : names) {
+				String value = (String) jObject.get(key);
+				if (!value.isEmpty()) {
+					query.append(key);
+					query.append("=");
+					query.append(value);
+					query.append("&");
+				}
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		query = query.deleteCharAt(query.length() - 1);
+
+		return query.toString();
+
+	}
+
+
+	public static void main(String[] args) {
+	  
+	  JSONObject jObject = new JSONObject();
+	  try { 
+		  jObject.put("firstName","Jacob");
+		  jObject.put("lastName","Vin");
+		  jObject.put("job", "Engineer");
+		  jObject.put("comment", "29");
+	  
+		 
+	
+	   ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, jObject);
+	  
+	  } catch (JSONException e) { 
+	  e.printStackTrace(); }
+	  
+	  }
+	
+	
+	
+	/*
+	
 	public static void main(String[] args) {
 		JSONObject obj = new JSONObject();
 		try {
-			obj.put("NAME", "Jacob");
+			obj.put("firstName", "Jacob");
 			int postDataLength = obj.length();
 
 			System.out.println("sent from here :" + obj);
@@ -140,19 +187,54 @@ public class ServletsCommunication {
 			System.out.println("received from servlet : " + ServletsCommunication.getStringfromServlet(ADD_URL));
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
+	*/
+	
+	
 
+	/*
+	 * 
+	 * public static void main(String[] args) { JSONObject obj = new
+	 * JSONObject(); try { obj.put("NAME", "Jacob"); int postDataLength =
+	 * obj.length();
+	 * 
+	 * System.out.println("sent from here :" + obj);
+	 * 
+	 * URL serverURL = new URL(ServletsCommunication.ADD_URL); HttpURLConnection
+	 * connect = (HttpURLConnection) serverURL.openConnection();
+	 * 
+	 * connect.setDoOutput(true); connect.setRequestMethod("POST");
+	 * connect.setRequestProperty("Content-Type", "application/json");
+	 * //"application/x-www-form-urlencoded"
+	 * connect.setRequestProperty("charset", "UTF-8");
+	 * connect.setRequestProperty("Content-Length",
+	 * Integer.toString(postDataLength));
+	 * 
+	 * OutputStream out =connect.getOutputStream(); InputStream response =
+	 * connect.getInputStream();
+	 * 
+	 * 
+	 * 
+	 * out.write(obj.toString().getBytes("UTF-8")); out.flush(); out.close();
+	 * response.close();
+	 * 
+	 * System.out.println("App received from servlet : " +
+	 * ServletsCommunication.getStringfromServlet(ADD_URL+"?name1=value1"));
+	 * 
+	 * } catch (JSONException e) { // 
+	 * e.printStackTrace(); } catch (MalformedURLException e) { //  * Auto-generated catch block e.printStackTrace(); } catch
+	 * (ProtocolException e) { // 
+	 * e.printStackTrace(); } catch (IOException e) { // 	 * catch block e.printStackTrace(); }
+	 * 
+	 * }
+	 */
 }

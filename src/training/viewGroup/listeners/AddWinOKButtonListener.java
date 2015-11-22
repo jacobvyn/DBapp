@@ -45,13 +45,12 @@ public class AddWinOKButtonListener implements ActionListener {
 			e.printStackTrace();
 		}
 
-		if (checkDateFormat(birthDay, "/") || checkDateFormat(birthDay, "-")) {
-			ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
-		} else {
+		if (!birthDay.isEmpty() && ( !checkDateFormat(birthDay, "/") || !checkDateFormat(birthDay, "-"))  ) {
 			addJObject.remove("birth_Day");
-			ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
 			new InputErrorModalWindow(parentsWindow.getAddDialog());
 		}
+		
+		ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
 
 		parentsWindow.getFace().repaint();
 		parentsWindow.getAddDialog().setVisible(false);
