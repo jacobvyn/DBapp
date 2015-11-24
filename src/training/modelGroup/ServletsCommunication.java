@@ -2,7 +2,9 @@ package training.modelGroup;
 
 import java.io.BufferedReader;
 
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.io.OutputStream;
@@ -24,20 +26,22 @@ public class ServletsCommunication {
 
 	public static void makeQueryByURL(String url, JSONObject jObject) {
 		try {
-			String totalQuery = url + makeQueryFromObject(jObject);
 			
-			
+			String query = makeQueryFromObject(jObject);
+			String totalQuery = url +"?"+ query ;
 			URL serverURL = new URL(totalQuery);
-			
+	
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
 			connect.setDoOutput(true);
+			connect.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			connect.setRequestProperty("charset", "UTF-8");
-			connect.setRequestProperty("Content-Type", "application/json");
 			
 			OutputStream out = connect.getOutputStream();
-			out.write(jObject.toString().getBytes("UTF-8"));
+			
+			out.write(query.getBytes("UTF-8"));
+			out.flush();
 			out.close();
-
+			
 			System.out.println("App: Next query was send : " + totalQuery);
 			System.out.println("App: received from servlet : " + ServletsCommunication.getStringfromServlet(ADD_URL));
 
@@ -56,11 +60,13 @@ public class ServletsCommunication {
 			URL serverUrl = new URL(url);
 			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
 			connection.setDoInput(true);
+			
 			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
 			StringBuilder jString = new StringBuilder();
 			String c;
 
+			
 			while ((c = br.readLine()) != null) {
 				jString.append(c);
 			}
@@ -76,7 +82,7 @@ public class ServletsCommunication {
 			System.out.println("IOException ");
 			e.printStackTrace();
 		} catch (JSONException e) {
-			System.out.println("Exception by creating JsonArray, source string is bad");
+			System.out.println("Exception by creating JsonArray, source string is bad (ServletsCommunication.getDataFromDB)");
 			e.printStackTrace();
 		}
 		return null;
@@ -112,10 +118,9 @@ public class ServletsCommunication {
 		return null;
 
 	}
-
+/// переделать метод что бы проверял наличие пустых параметров-----------------------
 	private static String makeQueryFromObject(JSONObject jObject) {
 		StringBuilder query = new StringBuilder();
-		query.append("?");
 		String[] names = JSONObject.getNames(jObject);
 
 		try {
@@ -138,8 +143,10 @@ public class ServletsCommunication {
 		return query.toString();
 
 	}
+	
 
 
+/*
 	public static void main(String[] args) {
 	  
 	  JSONObject jObject = new JSONObject();
@@ -148,9 +155,8 @@ public class ServletsCommunication {
 		  jObject.put("lastName","Vin");
 		  jObject.put("job", "Engineer");
 		  jObject.put("comment", "29");
+		  jObject.put("birthDay", "12/12/1212");
 	  
-		 
-	
 	   ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, jObject);
 	  
 	  } catch (JSONException e) { 
@@ -158,7 +164,7 @@ public class ServletsCommunication {
 	  
 	  }
 	
-	
+	*/
 	
 	/*
 	

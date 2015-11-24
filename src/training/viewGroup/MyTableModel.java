@@ -84,6 +84,7 @@ public class MyTableModel extends AbstractTableModel {
 
 	public void fillTheTable () {
 		JSONArray jArray=ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
+		
 		if (jArray !=null){
 			try {
 				for (int i = 0; i < jArray.length(); i++) {
@@ -104,7 +105,7 @@ public class MyTableModel extends AbstractTableModel {
 				e.printStackTrace();
 		}
 		} else {
-			System.out.println( "Somethig wrong with creating of JsonArray");
+			System.out.println( "Something wrong with creating of JsonArray (MyTableModel.fillTheTable)");
 		}
 		
 	}
