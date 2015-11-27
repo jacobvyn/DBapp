@@ -1,12 +1,8 @@
 package training.modelGroup;
 
 import java.io.BufferedReader;
-
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -36,11 +32,10 @@ public class ServletsCommunication {
 			connect.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			connect.setRequestProperty("charset", "UTF-8");
 			
-			OutputStream out = connect.getOutputStream();
-			
-			out.write(query.getBytes("UTF-8"));
-			out.flush();
-			out.close();
+			try (OutputStream out = connect.getOutputStream()){
+				out.write(query.getBytes("UTF-8"));
+				out.flush();
+			}
 			
 			System.out.println("App: Next query was send : " + totalQuery);
 			System.out.println("App: received from servlet : " + ServletsCommunication.getStringfromServlet(ADD_URL));
@@ -118,7 +113,7 @@ public class ServletsCommunication {
 		return null;
 
 	}
-/// переделать метод что бы проверял наличие пустых параметров-----------------------
+/// переделать метод что бы проверял наличие пустых параметров----------------------- или объект приходит со всеми полями?
 	private static String makeQueryFromObject(JSONObject jObject) {
 		StringBuilder query = new StringBuilder();
 		String[] names = JSONObject.getNames(jObject);
@@ -145,8 +140,8 @@ public class ServletsCommunication {
 	}
 	
 
-
 /*
+
 	public static void main(String[] args) {
 	  
 	  JSONObject jObject = new JSONObject();

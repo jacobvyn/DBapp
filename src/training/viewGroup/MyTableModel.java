@@ -16,8 +16,9 @@ import org.json.JSONObject;
 import training.modelGroup.MyDBDriver;
 import training.modelGroup.ServletsCommunication;
 
-
 public class MyTableModel extends AbstractTableModel {
+	JSONArray jArray;
+	JSONObject columnsNames;
 
 	private int columnCount = 6;
 	ArrayList<String[]> dataList;
@@ -41,21 +42,35 @@ public class MyTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(int columnIndex) {
-		switch (columnIndex) {
-		case 0:
-			return "#ID";
-		case 1:
-			return "Name";
-		case 2:
-			return "Lastname";
-		case 3:
-			return "Birthday";
-		case 4:
-			return "Job";
-		case 5:
-			return "Comment";
+		
+		try {
+			columnIndex++;
+			return columnsNames.getString(String.valueOf(columnIndex));
+		} catch (JSONException e) {
+			System.out.println("Exception by getting columns names (MyTableModel)");
 		}
-		return "";
+
+		return null;
+
+		
+		/*
+		 switch (columnIndex) {
+		 case 0:
+			 return "#ID";
+		 case 1:
+			 return "Name";
+		  case 2:
+			  return "Lastname";
+		  case 3:
+			  return "Birthday";
+		  case 4:
+			  return "Job";
+		  case 5:
+			  return "Comment";
+		  }
+		 return "";
+		 */
+
 	}
 
 	@Override
@@ -81,37 +96,39 @@ public class MyTableModel extends AbstractTableModel {
 		fillTheTable();
 	}
 
+	public void fillTheTable() {
+		jArray = ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
 
-	public void fillTheTable () {
-		JSONArray jArray=ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
-		
-		if (jArray !=null){
-			try {
+		try {
+			if (jArray != null) {
+				//get the object with name of tables names and delete it from jArray
+				columnsNames = jArray.getJSONObject(jArray.length()-1);
+				jArray.remove(jArray.length()-1);
+
 				for (int i = 0; i < jArray.length(); i++) {
-				
-					JSONObject object = jArray.getJSONObject(i);
-					String[] row = {
-							""+ object.getInt("USER_ID"),
-							object.getString("FIRSTNAME"),
-							object.getString("LASTNAME"),
-							object.getString("BIRTH_DAY"),
-							object.getString("JOB"),
-							object.getString("COMMENT") };
-					addDate(row);
-				
-				}
-			} catch (JSONException e) {
-				System.out.println("Exception by creating JsonObject");
-				e.printStackTrace();
-		}
-		} else {
-			System.out.println( "Something wrong with creating of JsonArray (MyTableModel.fillTheTable)");
-		}
-		
-	}
-	
 
-	// =============================================================== бпелеммши лернд!!
+					JSONObject object = jArray.getJSONObject(i);
+					ArrayList<String> row = new ArrayList<>();
+					String cellsName;
+					
+						for (int j =1; j <= columnsNames.length(); j++){
+								cellsName=columnsNames.getString(String.valueOf(j));
+									row.add(object.getString(cellsName));
+							}
+							addDate( row.toArray(new String [row.size()]));
+						}
+			} else {
+				System.out.println("Something wrong with creating of JsonArray (MyTableModel.fillTheTable)");
+			}
+		} catch (JSONException e) {
+			System.out.println("Exception by creating JsonObject");
+			e.printStackTrace();
+		}
+
+	}
+
+	// =============================================================== бпелеммши
+	// лернд!!
 	public void addDataToTable() {
 		MyDBDriver mcDrive = new MyDBDriver();
 		ResultSet rs = mcDrive.getResultSet();
