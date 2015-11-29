@@ -3,7 +3,6 @@ package training.modelGroup;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,22 +22,47 @@ public class ServletsCommunication {
 	public static void makeQueryByURL(String url, JSONObject jObject) {
 		try {
 			
+			
+			
 			String query = makeQueryFromObject(jObject);
 			String totalQuery = url +"?"+ query ;
 			URL serverURL = new URL(totalQuery);
 	
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
-			connect.setDoOutput(true);
-			connect.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			connect.setRequestProperty("charset", "UTF-8");
+			
+			System.out.println("App: Next query was send : " + totalQuery);
+			System.out.println("ServletsCommunication - Answer form server : " +connect.getResponseCode() + " " +connect.getResponseMessage());
+			
+			
+			/*
+			//connect.setDoOutput(true);
+			//connect.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			//connect.setRequestProperty("charset", "UTF-8");
 			
 			try (OutputStream out = connect.getOutputStream()){
 				out.write(query.getBytes("UTF-8"));
 				out.flush();
 			}
+			*/
+			
+			
+			
+			/*
+			String answer= null;
+			String line= null;
+			try (BufferedReader read = new BufferedReader(new InputStreamReader(connect.getInputStream()))){
+				
+				while ((line = read.readLine())!=null){
+					answer += line;
+				}
+				
+			}
+			
+			
 			
 			System.out.println("App: Next query was send : " + totalQuery);
-			System.out.println("App: received from servlet : " + ServletsCommunication.getStringfromServlet(ADD_URL));
+			System.out.println("App: received from servlet : " +answer );
+			*/
 
 		} catch (MalformedURLException e) {
 			System.out.println("Bad url  (ServletsCommunication.makeQueryByURL)");
@@ -117,16 +141,20 @@ public class ServletsCommunication {
 	private static String makeQueryFromObject(JSONObject jObject) {
 		StringBuilder query = new StringBuilder();
 		String[] names = JSONObject.getNames(jObject);
+		System.out.println("List of keys in json object");
+		for (String s: names) System.out.print( s +" ");
+		System.out.println();
+		System.out.println();
 
 		try {
 			for (String key : names) {
-				String value = (String) jObject.get(key);
-				if (!value.isEmpty()) {
+				String value = String.valueOf(jObject.get(key));
+				//if (!value.isEmpty()) {
 					query.append(key);
 					query.append("=");
 					query.append(value);
 					query.append("&");
-				}
+				//}
 			}
 
 		} catch (JSONException e) {
@@ -140,8 +168,8 @@ public class ServletsCommunication {
 	}
 	
 
-/*
 
+/*
 	public static void main(String[] args) {
 	  
 	  JSONObject jObject = new JSONObject();
@@ -158,8 +186,8 @@ public class ServletsCommunication {
 	  e.printStackTrace(); }
 	  
 	  }
-	
 	*/
+	
 	
 	/*
 	

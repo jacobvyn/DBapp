@@ -3,9 +3,11 @@ package training.viewGroup.listeners;
 import java.awt.event.ActionEvent;
 
 
+
 import java.awt.event.ActionListener;
 
-import training.modelGroup.MyDBDriver;
+import org.json.JSONException;
+import org.json.JSONObject;
 import training.modelGroup.ServletsCommunication;
 import training.viewGroup.FaceOfApp;
 
@@ -20,17 +22,31 @@ public class FaceWinDeLButtonListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
+		JSONObject jObject = new JSONObject();
+		
+		try {
+			jObject.put("toDelete", face.getSelectedUserId());
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		/*
 		MyDBDriver drive = new MyDBDriver();
 		drive.deleteRecord(face.getSelectedUserId());
-	
-		face.repaint();
-		
 		drive.releaseResources();
-		System.out.println("ID #" +(face.getSelectedUserId()) +" is deleted");
+		*/
+		
+		ServletsCommunication.makeQueryByURL(ServletsCommunication.DELETE_URL, jObject);
+		
+		face.repaint();
 		face.setSelectedUserIdAndRow();
 		
+		System.out.println("ID #" +(face.getSelectedUserId()) +" is deleted");
 		/////// to delete!!!
-		System.out.println("was received by DEL: "+ServletsCommunication.getStringfromServlet(ServletsCommunication.DELETE_URL));
+		//System.out.println("was received by DEL: "+ServletsCommunication.getStringfromServlet(ServletsCommunication.DELETE_URL));
 		
 
 	}

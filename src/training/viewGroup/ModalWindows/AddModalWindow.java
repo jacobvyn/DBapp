@@ -61,7 +61,7 @@ public class AddModalWindow {
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
 
-		nameTextField = new JTextField("This Field is required", 25);
+		nameTextField = new JTextField("Required", 25);
 		lastNameTextField = new JTextField(10);
 		birthDayTextField = new JTextField(10);
 		jobTextField = new JTextField(10);

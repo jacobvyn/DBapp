@@ -14,9 +14,9 @@ import training.modelGroup.ServletsCommunication;
 import training.viewGroup.ModalWindows.AddModalWindow;
 import training.viewGroup.ModalWindows.InputErrorModalWindow;
 
-
 public class AddWinOKButtonListener implements ActionListener {
 	AddModalWindow parentsWindow;
+	String birthDay;
 
 	public AddWinOKButtonListener(AddModalWindow window) {
 		this.parentsWindow = window;
@@ -25,31 +25,12 @@ public class AddWinOKButtonListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
-		String firstName = parentsWindow.getNameTextField().getText();
-		String lastName = parentsWindow.getLastNameTextField().getText();
-		String birthDay = parentsWindow.getBirthDayTextField().getText();
-		String job = parentsWindow.getJobTextField().getText();
-		String comment = parentsWindow.getCommentTextField().getText();
+		JSONObject addJObject = collectInfo();
 
-		JSONObject addJObject = new JSONObject();
-
-		try {
-			addJObject.put("firstName", firstName);
-			addJObject.put("lastName", lastName);
-			addJObject.put("birth_Day", birthDay);
-			addJObject.put("job", job);
-			addJObject.put("comment", comment);
-
-		} catch (JSONException e) {
-			System.out.println("Something wrong by creating addQuery string (AddWinOKButtonListener)");
-			e.printStackTrace();
-		}
-
-		if (!birthDay.isEmpty() && ( !checkDateFormat(birthDay, "/") || !checkDateFormat(birthDay, "-"))  ) {
-			addJObject.remove("birth_Day");
+		if (!birthDay.isEmpty() && (!checkDateFormat(birthDay, "/") || !checkDateFormat(birthDay, "-"))) {
 			new InputErrorModalWindow(parentsWindow.getAddDialog());
 		}
-		
+
 		ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
 
 		parentsWindow.getFace().repaint();
@@ -73,6 +54,35 @@ public class AddWinOKButtonListener implements ActionListener {
 			// ex.printStackTrace();
 		}
 		return date != null;
+	}
+
+	private JSONObject collectInfo() {
+		String firstName = parentsWindow.getNameTextField().getText();
+		String lastName = parentsWindow.getLastNameTextField().getText();
+		birthDay = parentsWindow.getBirthDayTextField().getText();
+
+		if (birthDay.isEmpty())
+			birthDay = "1970-01-01";
+
+		String job = parentsWindow.getJobTextField().getText();
+		String comment = parentsWindow.getCommentTextField().getText();
+
+		JSONObject addJObject = new JSONObject();
+
+		try {
+			addJObject.put("firstName", firstName);
+			addJObject.put("lastName", lastName);
+			addJObject.put("birthDay", birthDay);
+			addJObject.put("job", job);
+			addJObject.put("comment", comment);
+
+		} catch (JSONException e) {
+			System.out.println("Something wrong by creating addQuery string (AddWinOKButtonListener)");
+			e.printStackTrace();
+		}
+
+		return addJObject;
+
 	}
 
 }
