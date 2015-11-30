@@ -22,8 +22,6 @@ public class ServletsCommunication {
 	public static void makeQueryByURL(String url, JSONObject jObject) {
 		try {
 			
-			
-			
 			String query = makeQueryFromObject(jObject);
 			String totalQuery = url +"?"+ query ;
 			URL serverURL = new URL(totalQuery);
@@ -44,9 +42,6 @@ public class ServletsCommunication {
 				out.flush();
 			}
 			*/
-			
-			
-			
 			/*
 			String answer= null;
 			String line= null;
@@ -55,11 +50,7 @@ public class ServletsCommunication {
 				while ((line = read.readLine())!=null){
 					answer += line;
 				}
-				
 			}
-			
-			
-			
 			System.out.println("App: Next query was send : " + totalQuery);
 			System.out.println("App: received from servlet : " +answer );
 			*/
@@ -180,13 +171,23 @@ public class ServletsCommunication {
 		  jObject.put("comment", "29");
 		  jObject.put("birthDay", "12/12/1212");
 	  
-	   ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, jObject);
+	  // ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, jObject);
 	  
 	  } catch (JSONException e) { 
-	  e.printStackTrace(); }
+	  e.printStackTrace();
+	  }
+	  
+	  String [] names = JSONObject.getNames(jObject);
+	  
+	  	for (String n :names){
+	  		System.out.print(n +", ");
+	  		
+	  	}
 	  
 	  }
+	
 	*/
+	
 	
 	
 	/*
