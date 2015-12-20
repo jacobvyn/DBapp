@@ -2,10 +2,14 @@ package training.viewGroup;
 
 import java.sql.ResultSet;
 
+
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -42,7 +46,7 @@ public class MyTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(int columnIndex) {
-		
+
 		try {
 			columnIndex++;
 			return columnsNames.getString(String.valueOf(columnIndex));
@@ -51,25 +55,6 @@ public class MyTableModel extends AbstractTableModel {
 		}
 
 		return null;
-
-		
-		/*
-		 switch (columnIndex) {
-		 case 0:
-			 return "#ID";
-		 case 1:
-			 return "Name";
-		  case 2:
-			  return "Lastname";
-		  case 3:
-			  return "Birthday";
-		  case 4:
-			  return "Job";
-		  case 5:
-			  return "Comment";
-		  }
-		 return "";
-		 */
 
 	}
 
@@ -95,28 +80,37 @@ public class MyTableModel extends AbstractTableModel {
 		dataList.clear();
 		fillTheTable();
 	}
-
+	
+	
 	public void fillTheTable() {
-		jArray = ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
-
+		TreeMap<Integer, ArrayList<String>> resultTreeMap = jsonArrayToTreeMap();
+		Set<Entry<Integer, ArrayList<String>>> entries = resultTreeMap.entrySet();
+		
+		for (Entry<Integer, ArrayList<String>> entry : entries){
+			ArrayList<String> row = entry.getValue();
+			addDate(row.toArray(new String [row.size()]));
+		}
+		
+		
+	}
+	
+/*
+	public void fillTheTable111() {
 		try {
 			if (jArray != null) {
-				//get the object with name of tables names and delete it from jArray
-				columnsNames = jArray.getJSONObject(jArray.length()-1);
-				jArray.remove(jArray.length()-1);
 
 				for (int i = 0; i < jArray.length(); i++) {
 
-					JSONObject object = jArray.getJSONObject(i);
+					JSONObject record = jArray.getJSONObject(i);
 					ArrayList<String> row = new ArrayList<>();
-					String cellsName;
-					
-						for (int j =1; j <= columnsNames.length(); j++){
-								cellsName=columnsNames.getString(String.valueOf(j));
-									row.add(object.getString(cellsName));
-							}
-							addDate( row.toArray(new String [row.size()]));
-						}
+					String cellsContent;
+
+					for (int j = 1; j <= columnsNames.length(); j++) {
+						cellsContent = columnsNames.getString(String.valueOf(j));
+						row.add(record.getString(cellsContent));
+					}
+					addDate(row.toArray(new String[row.size()]));
+				}
 			} else {
 				System.out.println("Something wrong with creating of JsonArray (MyTableModel.fillTheTable)");
 			}
@@ -124,6 +118,43 @@ public class MyTableModel extends AbstractTableModel {
 			System.out.println("Exception by creating JsonObject");
 			e.printStackTrace();
 		}
+
+	}
+	
+	*/
+
+	private TreeMap<Integer, ArrayList<String>> jsonArrayToTreeMap() {
+		jArray = ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
+
+		// sort jArray seperate as method
+		TreeMap<Integer, ArrayList<String>> resultTreeMap = new TreeMap<Integer, ArrayList<String>>();
+
+		if (jArray != null) {
+			try {
+				// get the object with tables' names and delete it from jArray
+				columnsNames = jArray.getJSONObject(jArray.length() - 1);
+				jArray.remove(jArray.length() - 1);
+
+				for (int i = 0; i < jArray.length(); i++) {
+
+					JSONObject record = jArray.getJSONObject(i);
+					ArrayList<String> row = new ArrayList<String>();
+					String cellsContent;
+
+					for (int j = 1; j <= columnsNames.length(); j++) {
+						cellsContent = columnsNames.getString(String.valueOf(j));
+						row.add(record.getString(cellsContent));
+					}
+					
+					resultTreeMap.put(record.getInt("user_id"), row);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("The result received from server is empty");
+		}
+		return resultTreeMap;
 
 	}
 

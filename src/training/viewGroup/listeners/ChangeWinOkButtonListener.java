@@ -3,12 +3,10 @@ package training.viewGroup.listeners;
 import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import training.modelGroup.MyDBDriver;
 import training.modelGroup.ServletsCommunication;
 import training.viewGroup.ModalWindows.ChangeModalWindow;
 import training.viewGroup.ModalWindows.InputErrorModalWindow;
@@ -32,16 +30,17 @@ public class ChangeWinOkButtonListener implements ActionListener {
 			for (String s : names) {
 				System.out.print(s + ", ");
 			}
-			
+			System.out.println();
+
 			int user_id = parentsWindow.getFace().getSelectedUserId();
-			
+
 			try {
 				jObject.put("user_id", String.valueOf(user_id));
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			ServletsCommunication.makeQueryByURL(ServletsCommunication.CHANGE_URL, jObject);
 			parentsWindow.getFace().repaint();
 
@@ -83,22 +82,18 @@ public class ChangeWinOkButtonListener implements ActionListener {
 				jObject.put(comment, commentVal);
 			}
 
-			if (birthDayVal.length() != 0
-					&& (AddWinOKButtonListener.checkDateFormat(birthDayVal, "/")
-							|| AddWinOKButtonListener.checkDateFormat(birthDayVal, "-"))
-					&& !birthDayVal.equals(parentsWindow.getPrevBday())) {
-				jObject.put(birthDay, birthDayVal);
-			} else {
+			if (birthDayVal.isEmpty() || !AddWinOKButtonListener.checkDateFormat(birthDayVal, "-")) {
 				jObject.put(birthDay, "1970-01-01");
 				new InputErrorModalWindow(parentsWindow.getChangeDialog());
+			} else if (!birthDayVal.equals(parentsWindow.getPrevBday())) {
+				jObject.put(birthDay, birthDayVal);
 			}
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return jObject;
-
 	}
 
 }

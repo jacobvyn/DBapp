@@ -27,7 +27,7 @@ public class AddWinOKButtonListener implements ActionListener {
 
 		JSONObject addJObject = collectInfo();
 
-		if (!birthDay.isEmpty() && (!checkDateFormat(birthDay, "/") || !checkDateFormat(birthDay, "-"))) {
+		if (!birthDay.isEmpty() && !checkDateFormat(birthDay, "-")) {
 			new InputErrorModalWindow(parentsWindow.getAddDialog());
 		}
 
@@ -40,7 +40,7 @@ public class AddWinOKButtonListener implements ActionListener {
 
 	public static boolean checkDateFormat(String value, String separator) {
 
-		String format = "dd" + separator + "mm" + separator + "yyyy";
+		String format ="yyyy" + separator + "mm" + separator + "dd";
 
 		Date date = null;
 		try {

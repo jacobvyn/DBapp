@@ -100,8 +100,8 @@ public class ServletsCommunication {
 	}
 
 	// checking method
-
-	public static String getStringfromServlet(String url) {
+/*
+	private static String getStringfromServlet(String url) {
 		String jString = "";
 		try {
 			URL serverUrl = new URL(url);
@@ -128,37 +128,28 @@ public class ServletsCommunication {
 		return null;
 
 	}
+	*/
+	
 /// переделать метод что бы провер€л наличие пустых параметров----------------------- или объект приходит со всеми пол€ми?
 	private static String makeQueryFromObject(JSONObject jObject) {
 		StringBuilder query = new StringBuilder();
 		String[] names = JSONObject.getNames(jObject);
-		System.out.println("List of keys in json object");
-		for (String s: names) System.out.print( s +" ");
-		System.out.println();
-		System.out.println();
-
 		try {
 			for (String key : names) {
 				String value = String.valueOf(jObject.get(key));
-				//if (!value.isEmpty()) {
 					query.append(key);
 					query.append("=");
 					query.append(value);
 					query.append("&");
-				//}
 			}
-
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
 		query = query.deleteCharAt(query.length() - 1);
 
 		return query.toString();
-
 	}
 	
-
 
 /*
 	public static void main(String[] args) {
