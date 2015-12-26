@@ -16,7 +16,7 @@ import training.viewGroup.ModalWindows.InputErrorModalWindow;
 
 public class AddWinOKButtonListener implements ActionListener {
 	AddModalWindow parentsWindow;
-	String birthDay;
+	String birth_Day;
 
 	public AddWinOKButtonListener(AddModalWindow window) {
 		this.parentsWindow = window;
@@ -27,7 +27,7 @@ public class AddWinOKButtonListener implements ActionListener {
 
 		JSONObject addJObject = collectInfo();
 
-		if (!birthDay.isEmpty() && !checkDateFormat(birthDay, "-")) {
+		if (!birth_Day.isEmpty() && !checkDateFormat(birth_Day, "-")) {
 			new InputErrorModalWindow(parentsWindow.getAddDialog());
 		}
 
@@ -38,9 +38,37 @@ public class AddWinOKButtonListener implements ActionListener {
 
 	}
 
+	private JSONObject collectInfo() {
+		String firstName = parentsWindow.getNameTextField().getText();
+		String lastName = parentsWindow.getLastNameTextField().getText();
+		birth_Day = parentsWindow.getBirthDayTextField().getText();
+
+		if (birth_Day.isEmpty() || !checkDateFormat(birth_Day, "-")) birth_Day = "1970-01-01";
+
+		String job = parentsWindow.getJobTextField().getText();
+		String comment = parentsWindow.getCommentTextField().getText();
+
+		JSONObject addJObject = new JSONObject();
+
+		try {
+			addJObject.put("FIRSTNAME", firstName);
+			addJObject.put("LASTNAME", lastName);
+			addJObject.put("BIRTH_DAY", birth_Day);
+			addJObject.put("JOB", job);
+			addJObject.put("COMMENT", comment);
+
+		} catch (JSONException e) {
+			System.out.println("Something wrong by creating addQuery string (AddWinOKButtonListener)");
+			e.printStackTrace();
+		}
+
+		return addJObject;
+
+	}
+
 	public static boolean checkDateFormat(String value, String separator) {
 
-		String format ="yyyy" + separator + "mm" + separator + "dd";
+		String format = "yyyy" + separator + "mm" + separator + "dd";
 
 		Date date = null;
 		try {
@@ -54,35 +82,6 @@ public class AddWinOKButtonListener implements ActionListener {
 			// ex.printStackTrace();
 		}
 		return date != null;
-	}
-
-	private JSONObject collectInfo() {
-		String firstName = parentsWindow.getNameTextField().getText();
-		String lastName = parentsWindow.getLastNameTextField().getText();
-		birthDay = parentsWindow.getBirthDayTextField().getText();
-
-		if (birthDay.isEmpty())
-			birthDay = "1970-01-01";
-
-		String job = parentsWindow.getJobTextField().getText();
-		String comment = parentsWindow.getCommentTextField().getText();
-
-		JSONObject addJObject = new JSONObject();
-
-		try {
-			addJObject.put("firstName", firstName);
-			addJObject.put("lastName", lastName);
-			addJObject.put("birthDay", birthDay);
-			addJObject.put("job", job);
-			addJObject.put("comment", comment);
-
-		} catch (JSONException e) {
-			System.out.println("Something wrong by creating addQuery string (AddWinOKButtonListener)");
-			e.printStackTrace();
-		}
-
-		return addJObject;
-
 	}
 
 }

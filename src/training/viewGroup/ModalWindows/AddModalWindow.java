@@ -27,16 +27,18 @@ public class AddModalWindow {
 	JLabel birthDayLabel;
 	JLabel jobLabel;
 	JLabel commentLabel;
-	JLabel status;
-
-	JButton okButton;
-	JButton cancelButton;
-
+	
 	JTextField nameTextField;
 	JTextField lastNameTextField;
 	JTextField birthDayTextField;
 	JTextField jobTextField;
 	JTextField commentTextField;
+	
+	JLabel status;
+	JButton okButton;
+	JButton cancelButton;
+
+	
 
 	public AddModalWindow(FaceOfApp face) {
 		this.face = face;
