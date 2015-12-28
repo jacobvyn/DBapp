@@ -21,11 +21,11 @@ public class InputErrorModalWindow {
 		errorWindow.setLayout(new BorderLayout());
 
 		ok = new JButton("OK");
-		
+
 		errorWindow.add(new JLabel("You have made a mistake while inputing a \"date\" "), BorderLayout.NORTH);
 		errorWindow.add(new JLabel("This field will be set as \"1970-01-01\"."), BorderLayout.CENTER);
 		errorWindow.add(ok, BorderLayout.SOUTH);
-		
+
 		ok.addActionListener(new ActionListener() {
 
 			@Override

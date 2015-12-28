@@ -3,6 +3,9 @@ package training.viewGroup.listeners;
 import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.JTextField;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +24,7 @@ public class ChangeWinOkButtonListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		JSONObject jObject = collectData();
+		JSONObject jObject = collectData_new();
 
 		if (!(jObject.length() == 0)) {
 
@@ -50,43 +53,32 @@ public class ChangeWinOkButtonListener implements ActionListener {
 
 	}
 
-	private JSONObject collectData() {
+	private ArrayList<String> getNewValues() {
+		ArrayList<JTextField> textFieldsList = parentsWindow.getTextFieldsList();
+		ArrayList<String> newValues = new ArrayList<>();
+		for (JTextField field : textFieldsList) {
+			newValues.add(field.getText());
+		}
+		return newValues;
+	}
 
-		String firstName = "FIRSTNAME";
-		String lastName = "LASTNAME";
-		String birthDay = "BIRTH_DAY";
-		String job = "JOB";
-		String comment = "COMMENT";
-
-		String firstNameVal = parentsWindow.getNameTextField().getText();
-		String lastNameVal = parentsWindow.getLastNameTextField().getText();
-		String birthDayVal = parentsWindow.getBirthDayTextField().getText();
-		String jobVal = parentsWindow.getJobTextField().getText();
-		String commentVal = parentsWindow.getCommentTextField().getText();
+	private JSONObject collectData_new() {
+		ArrayList<String> prevValues = parentsWindow.getPrevValuesOfFields();
+		ArrayList<String> newValues = getNewValues();
+		ArrayList<String> columnsNames = parentsWindow.getColumnsNames();
+		columnsNames.remove(0); // delete cell "user id"
 
 		JSONObject jObject = new JSONObject();
 		try {
-			if (!firstNameVal.equals(parentsWindow.getPrevName())) {
-				jObject.put(firstName, firstNameVal);
-			}
+			for (int i = 0; i < newValues.size(); i++) {
+				if (i == 2 && (newValues.get(i).isEmpty()
+						|| !AddWinOKButtonListener.checkDateFormat(newValues.get(i), "-"))) {
+					jObject.put(columnsNames.get(i), "1970-01-01");
+					new InputErrorModalWindow(parentsWindow.getChangeDialog());
 
-			if (!lastNameVal.equals(parentsWindow.getPrevLastname())) {
-				jObject.put(lastName, lastNameVal);
-			}
-
-			if (!jobVal.equals(parentsWindow.getPrevJob())) {
-				jObject.put(job, jobVal);
-			}
-
-			if (!commentVal.equals(parentsWindow.getPrevComment())) {
-				jObject.put(comment, commentVal);
-			}
-
-			if (birthDayVal.isEmpty() || !AddWinOKButtonListener.checkDateFormat(birthDayVal, "-")) {
-				jObject.put(birthDay, "1970-01-01");
-				new InputErrorModalWindow(parentsWindow.getChangeDialog());
-			} else if (!birthDayVal.equals(parentsWindow.getPrevBday())) {
-				jObject.put(birthDay, birthDayVal);
+				} else if (!prevValues.get(i).equalsIgnoreCase(newValues.get(i))) {
+					jObject.put(columnsNames.get(i), newValues.get(i));
+				}
 			}
 
 		} catch (JSONException e) {

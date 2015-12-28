@@ -1,6 +1,7 @@
 package training.viewGroup;
 
 import java.awt.BorderLayout;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -33,13 +34,10 @@ public class FaceOfApp extends JFrame {
 
 	private MyTableModel tableModel;
 	private JTable table;
-	
 
-
-	
 	public FaceOfApp() {
 		super("My first internet-application");
-		this.setSize(500, 600);
+		this.setSize(600, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 
@@ -51,10 +49,8 @@ public class FaceOfApp extends JFrame {
 	}
 
 	private void makeTable() {
-
 		tableModel = new MyTableModel();
-		tableModel.fillTheTable();
-		
+
 		table = new JTable(tableModel);
 
 		JPanel paneltable = new JPanel();
@@ -78,10 +74,9 @@ public class FaceOfApp extends JFrame {
 		change.addActionListener(new FaceWinChangeButtonListener(this));
 		add.addActionListener(new FaceWinAddButtonListener(this));
 		del.addActionListener(new FaceWinDeLButtonListener(this));
-	
 
-		countOfRecords.setText("Records : " +tableModel.getRowCount());
-		
+		countOfRecords.setText("Records : " + tableModel.getRowCount());
+
 		JPanel panelButtons = new JPanel();
 		panelButtons.setLayout(new FlowLayout());
 
@@ -101,11 +96,7 @@ public class FaceOfApp extends JFrame {
 			}
 		});
 	}
-
-	public JTable getTable() {
-		return table;
-	}
-
+	
 	public int getSelectedUserId() {
 		return selectedUserId;
 	}
@@ -138,15 +129,13 @@ public class FaceOfApp extends JFrame {
 	public int getSelecteRow() {
 		return selecteRow;
 	}
-	
+
 	@Override
 	public void repaint() {
 		tableModel.refreshDataList();
-		countOfRecords.setText("Records : " +tableModel.getRowCount());
+		countOfRecords.setText("Records : " + tableModel.getRowCount());
 		super.repaint();
 	}
-	
-	
 
 	// ===========================================================================================================================
 	public static void main(String[] args) {

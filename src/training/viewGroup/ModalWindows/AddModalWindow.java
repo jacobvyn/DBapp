@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -18,89 +19,73 @@ import training.viewGroup.listeners.AddWinOKButtonListener;
 import training.viewGroup.listeners.MyCaretListener;
 
 public class AddModalWindow {
-	FaceOfApp face;
+	private FaceOfApp face;
+	private JDialog addDialog;
 
-	JDialog addDialog;
+	private ArrayList<JLabel> labelsList;
+	private ArrayList<JTextField> textFieldsList;
+	private ArrayList<String> columnsNames;
 
-	JLabel nameLabel;
-	JLabel lastNameLabel;
-	JLabel birthDayLabel;
-	JLabel jobLabel;
-	JLabel commentLabel;
-	
-	JTextField nameTextField;
-	JTextField lastNameTextField;
-	JTextField birthDayTextField;
-	JTextField jobTextField;
-	JTextField commentTextField;
-	
-	JLabel status;
-	JButton okButton;
-	JButton cancelButton;
-
-	
+	private JLabel status;
+	private JButton okButton;
+	private JButton cancelButton;
 
 	public AddModalWindow(FaceOfApp face) {
 		this.face = face;
+		columnsNames = face.getTableModel().getColumnsNames();
+
 		addDialog = new JDialog(face, "Enter information about the person", true);
 		addDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addDialog.setLayout(new GridBagLayout());
 		addDialog.setSize(450, 250);
 
-		makeLabelsButtonsAndTextFields();
+		makeLabelsAndTextFields();
+		makeButtons();
+
 		addDialog.setVisible(true);
 		addDialog.pack();
 
 	}
 
-	private void makeLabelsButtonsAndTextFields() {
-		nameLabel = new JLabel("Name");
-		lastNameLabel = new JLabel("Lastname");
-		birthDayLabel = new JLabel("Birth Day");
-		jobLabel = new JLabel("Job");
-		commentLabel = new JLabel("Comment");
+	private void makeLabelsAndTextFields() {
+		labelsList = new ArrayList<>();
+		textFieldsList = new ArrayList<>();
 
+		int columnsCount = columnsNames.size();
+
+		for (int i = 1; i < columnsCount; i++) {
+			String name = makeNice(columnsNames.get(i));
+			labelsList.add(new JLabel(name));
+			if (i==1){
+				textFieldsList.add(new JTextField("Required", 15));
+			} else {
+				textFieldsList.add(new JTextField(15));
+			}
+		}
+
+		for (int i = 0; i < columnsCount - 1; i++) {
+
+			addDialog.add(labelsList.get(i), new GridBagConstraints(0, i + 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
+					GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
+
+			addDialog.add(textFieldsList.get(i), new GridBagConstraints(1, i + 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
+					GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
+		}
+
+	}
+
+	private void makeButtons() {
+		int lastPosition = columnsNames.size();
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
-
-		nameTextField = new JTextField("Required", 25);
-		lastNameTextField = new JTextField(10);
-		birthDayTextField = new JTextField(10);
-		jobTextField = new JTextField(10);
-		commentTextField = new JTextField(20);
 		status = new JLabel("Status : clear");
 
-		addDialog.add(nameLabel, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
+		addDialog.add(okButton, new GridBagConstraints(0, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-		addDialog.add(nameTextField, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
-		addDialog.add(lastNameLabel, new GridBagConstraints(0, 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-		addDialog.add(lastNameTextField, new GridBagConstraints(1, 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
+		addDialog.add(cancelButton, new GridBagConstraints(1, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 
-		addDialog.add(birthDayLabel, new GridBagConstraints(0, 3, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-		addDialog.add(birthDayTextField, new GridBagConstraints(1, 3, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
-		addDialog.add(jobLabel, new GridBagConstraints(0, 4, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-		addDialog.add(jobTextField, new GridBagConstraints(1, 4, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
-		addDialog.add(commentLabel, new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-		addDialog.add(commentTextField, new GridBagConstraints(1, 5, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
-		addDialog.add(okButton, new GridBagConstraints(0, 6, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-		addDialog.add(cancelButton, new GridBagConstraints(1, 6, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
-		addDialog.add(status, new GridBagConstraints(0, 7, 0, 0, 0, 0, GridBagConstraints.NORTH,
+		addDialog.add(status, new GridBagConstraints(0, lastPosition + 3, 0, 0, 0, 0, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 
 		cancelButton.addActionListener(new ActionListener() {
@@ -112,30 +97,13 @@ public class AddModalWindow {
 
 		okButton.addActionListener(new AddWinOKButtonListener(this));
 
-		
-		birthDayTextField.addCaretListener(new MyCaretListener(birthDayTextField, status));
-		
+		textFieldsList.get(2).addCaretListener(new MyCaretListener(textFieldsList.get(2), status));
 
 	}
 
-	public JTextField getNameTextField() {
-		return nameTextField;
-	}
-
-	public JTextField getLastNameTextField() {
-		return lastNameTextField;
-	}
-
-	public JTextField getBirthDayTextField() {
-		return birthDayTextField;
-	}
-
-	public JTextField getJobTextField() {
-		return jobTextField;
-	}
-
-	public JTextField getCommentTextField() {
-		return commentTextField;
+	public static String makeNice(String str) {
+		String newStr = str.toUpperCase().charAt(0) + str.toLowerCase().substring(1, str.length());
+		return newStr.replace('_', ' ');
 	}
 
 	public JDialog getAddDialog() {
@@ -145,6 +113,13 @@ public class AddModalWindow {
 	public FaceOfApp getFace() {
 		return face;
 	}
+	
+	public ArrayList<JTextField> getTextFieldsList() {
+		return textFieldsList;
+	}
 
+	public ArrayList<String> getColumnsNames() {
+		return columnsNames;
+	}
 
 }

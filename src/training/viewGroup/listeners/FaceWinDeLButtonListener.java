@@ -35,7 +35,7 @@ public class FaceWinDeLButtonListener implements ActionListener {
 		face.setSelectedUserIdAndRow();
 
 		System.out.println("ID #" + (face.getSelectedUserId()) + " is deleted");
-	
+
 	}
 
 }

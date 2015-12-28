@@ -5,7 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+
+import javax.swing.JTextField;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,31 +42,28 @@ public class AddWinOKButtonListener implements ActionListener {
 	}
 
 	private JSONObject collectInfo() {
-		String firstName = parentsWindow.getNameTextField().getText();
-		String lastName = parentsWindow.getLastNameTextField().getText();
-		birth_Day = parentsWindow.getBirthDayTextField().getText();
-
-		if (birth_Day.isEmpty() || !checkDateFormat(birth_Day, "-")) birth_Day = "1970-01-01";
-
-		String job = parentsWindow.getJobTextField().getText();
-		String comment = parentsWindow.getCommentTextField().getText();
+		ArrayList<JTextField> textFieldsList = parentsWindow.getTextFieldsList();
+		ArrayList<String> columnsNames = parentsWindow.getColumnsNames();
+		columnsNames.remove(0);
 
 		JSONObject addJObject = new JSONObject();
-
 		try {
-			addJObject.put("FIRSTNAME", firstName);
-			addJObject.put("LASTNAME", lastName);
-			addJObject.put("BIRTH_DAY", birth_Day);
-			addJObject.put("JOB", job);
-			addJObject.put("COMMENT", comment);
-
+			for (int i = 0; i < textFieldsList.size(); i++) {
+				if (i == 2) {
+					birth_Day = textFieldsList.get(i).getText();
+					if (birth_Day.isEmpty() || !checkDateFormat(birth_Day, "-"))
+						birth_Day = "1970-01-01";
+					addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
+				} else
+					addJObject.put(columnsNames.get(i).toUpperCase(), textFieldsList.get(i).getText());
+			}
 		} catch (JSONException e) {
-			System.out.println("Something wrong by creating addQuery string (AddWinOKButtonListener)");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+		System.out.println(addJObject);
 		return addJObject;
-
 	}
 
 	public static boolean checkDateFormat(String value, String separator) {
