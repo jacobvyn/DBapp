@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import training.modelGroup.DataFromDB;
+import training.viewGroup.ModalWindows.AddModalWindow;
 
 public class MyTableModel extends AbstractTableModel {
 
@@ -47,7 +48,9 @@ public class MyTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(int columnIndex) {
-		return columnsNames.get(columnIndex);
+		if (columnIndex==0) return "ID";
+		else 
+		return AddModalWindow.makeNice(columnsNames.get(columnIndex));
 
 	}
 

@@ -30,10 +30,6 @@ public class AddWinOKButtonListener implements ActionListener {
 
 		JSONObject addJObject = collectInfo();
 
-		if (!birth_Day.isEmpty() && !checkDateFormat(birth_Day, "-")) {
-			new InputErrorModalWindow(parentsWindow.getAddDialog());
-		}
-
 		ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
 
 		parentsWindow.getFace().repaint();
@@ -50,20 +46,33 @@ public class AddWinOKButtonListener implements ActionListener {
 		try {
 			for (int i = 0; i < textFieldsList.size(); i++) {
 				if (i == 2) {
+
 					birth_Day = textFieldsList.get(i).getText();
-					if (birth_Day.isEmpty() || !checkDateFormat(birth_Day, "-"))
+					if (birth_Day.isEmpty()) {
 						birth_Day = "1970-01-01";
-					addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
+						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
+					} else if (!birth_Day.isEmpty() && !checkDateFormat(birth_Day, "-")) {
+						birth_Day = "1970-01-01";
+						new InputErrorModalWindow(parentsWindow.getAddDialog());
+						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
+					}
+
 				} else
 					addJObject.put(columnsNames.get(i).toUpperCase(), textFieldsList.get(i).getText());
+
 			}
-		} catch (JSONException e) {
+		} catch (
+
+		JSONException e)
+
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		System.out.println(addJObject);
 		return addJObject;
+
 	}
 
 	public static boolean checkDateFormat(String value, String separator) {
