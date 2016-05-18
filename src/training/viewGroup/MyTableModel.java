@@ -89,7 +89,8 @@ public class MyTableModel extends AbstractTableModel {
 
 	private ArrayList<String> jsonToArrayList(JSONObject ob) {
 		ArrayList<String> columnNames = new ArrayList<>();
-		for (int i = 1; i <= ob.length(); i++) {
+		// i was 1
+		for (int i = 0; i < ob.length(); i++) {
 			try {
 				columnNames.add(ob.getString(String.valueOf(i)));
 			} catch (JSONException e) {
@@ -98,7 +99,6 @@ public class MyTableModel extends AbstractTableModel {
 			}
 		}
 		return columnNames;
-
 	}
 	
 	public ArrayList<String> getColumnsNames() {

@@ -19,6 +19,7 @@ public class ServletsCommunication {
 	public static final String DELETE_URL = HOST_AND_PORT + "/DBServlet/dbDelete";
 	public static final String GET_DATA_URL = HOST_AND_PORT + "/DBServlet/dbGetData";
 
+
 	public static void makeQueryByURL(String url, JSONObject jObject) {
 		try {
 			
@@ -46,11 +47,17 @@ public class ServletsCommunication {
 
 		try {
 			URL serverUrl = new URL(url);
-			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
-			connection.setDoInput(true);
 			
-			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
+			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
+			
+			connection.setDoInput(true);
+			System.out.println("Response code is "+connection.getResponseCode());
+			System.out.println("Response message is "+connection.getResponseMessage());
+			
+			InputStreamReader isr= new InputStreamReader(connection.getInputStream());
+			
+			BufferedReader br = new BufferedReader(isr);
+			
 			StringBuilder jString = new StringBuilder();
 			String c;
 
@@ -61,13 +68,17 @@ public class ServletsCommunication {
 			br.close();
 
 			JSONArray jsonArr = new JSONArray(jString.toString());
+			
 			return jsonArr;
 
 		} catch (MalformedURLException e) {
 			System.out.println("Something bad with URL");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("IOException ");
+			System.out.println("IOException. Failed by creating bufferde reader");
+			e.getCause();
+			e.getLocalizedMessage();
+			e.getMessage();
 			e.printStackTrace();
 		} catch (JSONException e) {
 			System.out.println("Exception by creating JsonArray, source string is bad (ServletsCommunication.getDataFromDB)");
@@ -96,6 +107,29 @@ public class ServletsCommunication {
 		query = query.deleteCharAt(query.length() - 1);
 
 		return query.toString();
+	}
+	
+	// test --------------
+	
+	public static void printData(String url) {
+		
+		URL serverUrl;
+		try {
+			serverUrl = new URL(url);
+			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
+			System.out.println("Connection is opend!");
+			connection.setDoInput(true);
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 }
 
