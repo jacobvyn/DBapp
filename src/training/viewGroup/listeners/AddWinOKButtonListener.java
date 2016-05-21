@@ -55,6 +55,8 @@ public class AddWinOKButtonListener implements ActionListener {
 						birth_Day = "1970-01-01";
 						new InputErrorModalWindow(parentsWindow.getAddDialog());
 						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
+					} else if (!birth_Day.isEmpty() && checkDateFormat(birth_Day, "-")){
+						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
 					}
 
 				} else
@@ -92,5 +94,7 @@ public class AddWinOKButtonListener implements ActionListener {
 		}
 		return date != null;
 	}
+	
+
 
 }

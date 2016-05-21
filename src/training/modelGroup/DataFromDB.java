@@ -20,7 +20,7 @@ public class DataFromDB {
 
 	private void initialize() {
 		jArray = ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
-		System.out.println("[DataFromDB] Received : "+jArray);
+		//System.out.println("[DataFromDB] Received : "+jArray);
 		setColumnsNames();
 		jsonArrayToTreeMap();
 
@@ -37,7 +37,7 @@ public class DataFromDB {
 					JSONObject record = jArray.getJSONObject(i);
 					ArrayList<String> row = new ArrayList<String>();
 					String cellsContent;
-// j was 1
+
 					for (int j = 0; j < columnsNames.length(); j++) {
 						
 						cellsContent = columnsNames.getString(String.valueOf(j));
@@ -65,7 +65,7 @@ public class DataFromDB {
 	public void setColumnsNames() {
 		// get the object with tables' names and delete it from jArray
 		try {
-			System.out.println(jArray==null);
+			
 			columnsNames = jArray.getJSONObject(jArray.length() - 1);
 			jArray.remove(jArray.length() - 1);
 		} catch (JSONException e) {

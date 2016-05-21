@@ -2,6 +2,7 @@ package training.modelGroup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -29,8 +30,8 @@ public class ServletsCommunication {
 	
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
 			
-			System.out.println("App: Next query was send : " + totalQuery);
-			System.out.println("ServletsCommunication - Answer from server : " +connect.getResponseCode() + " " +connect.getResponseMessage());
+			System.out.println("[ServletsCommunication] App: Next query was send : " + totalQuery);
+			System.out.println("[ServletsCommunication]  Answer from server : " +connect.getResponseCode() + " " +connect.getResponseMessage());
 			
 
 
@@ -51,8 +52,7 @@ public class ServletsCommunication {
 			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
 			
 			connection.setDoInput(true);
-			System.out.println("Response code is "+connection.getResponseCode());
-			System.out.println("Response message is "+connection.getResponseMessage());
+			System.out.println("[ServletsCommunication] Getting data... Response code is "+connection.getResponseCode() +" "+connection.getResponseMessage());
 			
 			InputStreamReader isr= new InputStreamReader(connection.getInputStream());
 			
