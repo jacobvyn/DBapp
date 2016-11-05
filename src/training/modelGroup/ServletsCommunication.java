@@ -19,18 +19,18 @@ public class ServletsCommunication {
 	public static final String DELETE_URL = HOST_AND_PORT + "/DBServlet/dbDelete";
 	public static final String GET_DATA_URL = HOST_AND_PORT + "/DBServlet/dbGetData";
 
-	public static void makeQueryByURL(String url, JSONObject jObject) {
+	public static void makeQueryByURL(String httpVerb, JSONObject jObject) {
 		try {
-
 			String parameters = makeQueryFromObject(jObject);
-			String totalQuery = url + "?" + parameters;
+			String totalQuery = httpVerb + "?" + parameters;
 			URL serverURL = new URL(totalQuery);
 
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
-
+			
 			System.out.println("[ServletsCommunication] App: Next query was send : " + totalQuery);
-			System.out.println("[ServletsCommunication]  Answer from server : " + connect.getResponseCode() + " "
-					+ connect.getResponseMessage());
+			int responseCode=connect.getResponseCode();
+			String responseCodeMessage =connect.getResponseMessage();
+			System.out.println("[ServletsCommunication]  Answer from server : " + responseCode + " " + responseCodeMessage);
 
 		} catch (MalformedURLException e) {
 			System.out.println("Bad url  (ServletsCommunication.makeQueryByURL)");

@@ -4,8 +4,7 @@ import java.awt.GridBagConstraints;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -15,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import training.viewGroup.FaceOfApp;
-import training.viewGroup.listeners.ChangeWinOkButtonListener;
+import training.viewGroup.listeners.ModalWindowsButtonListener;
 import training.viewGroup.listeners.MyCaretListener;
 
 public class ChangeModalWindow {
@@ -47,7 +46,7 @@ public class ChangeModalWindow {
 
 		// makeLabelsButtonsAndTextFields();
 		makeLabelsAndTextFields();
-		makeButtons();
+		createButtons();
 		setPreviousValuesOfTextFields();
 
 		changeDialog.setVisible(true);
@@ -85,7 +84,7 @@ public class ChangeModalWindow {
 
 	}
 
-	private void makeButtons() {
+	private void createButtons() {
 		int lastPosition = columnsNames.size();
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
@@ -95,18 +94,16 @@ public class ChangeModalWindow {
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 		changeDialog.add(cancelButton, new GridBagConstraints(1, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
 		changeDialog.add(status, new GridBagConstraints(0, lastPosition + 3, 0, 0, 0, 0, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				changeDialog.setVisible(false);
-			}
-		});
+		ModalWindowsButtonListener listener = new ModalWindowsButtonListener(null, this);
+		cancelButton.setActionCommand("cancelChange");
+		cancelButton.addActionListener(listener);
 
-		okButton.addActionListener(new ChangeWinOkButtonListener(this));
+		okButton.setActionCommand("okChange");
+		okButton.addActionListener(listener);
+
 		textFieldsList.get(2).addCaretListener(new MyCaretListener(textFieldsList.get(2), status));
 	}
 

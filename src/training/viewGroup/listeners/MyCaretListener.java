@@ -20,13 +20,13 @@ public class MyCaretListener implements CaretListener {
 	public void caretUpdate(CaretEvent e) {
 
 		String date = textField.getText();
-		if (AddWinOKButtonListener.checkDateFormat(date, "/") || AddWinOKButtonListener.checkDateFormat(date, "-")
+		if (ModalWindowsButtonListener.checkDateFormat(date, "/") || ModalWindowsButtonListener.checkDateFormat(date, "-")
 				|| date.length() == 0) {
 			status.setForeground(Color.black);
 			status.setText("Status : clear");
 		} else {
 			status.setForeground(Color.red);
-			status.setText("Status : format of the date has to be \"yyyy-mm-dd\"");
+			status.setText("Status : the date format has to be like \"yyyy-mm-dd\"");
 
 		}
 	}

@@ -1,12 +1,8 @@
 package training.viewGroup;
 
 import java.awt.BorderLayout;
-
-
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,11 +15,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-
-
-import training.viewGroup.listeners.FaceWinAddButtonListener;
-import training.viewGroup.listeners.FaceWinChangeButtonListener;
-import training.viewGroup.listeners.FaceWinDeLButtonListener;
+import training.viewGroup.listeners.FaceButtonListener;
 
 public class FaceOfApp extends JFrame {
 	private JButton add;
@@ -45,7 +37,7 @@ public class FaceOfApp extends JFrame {
 		this.setLayout(new BorderLayout());
 
 		makeTable();
-		makeButtons();
+		crateButtons();
 		setSelectedUserIdAndRow();
 		this.setVisible(true);
 		this.pack();
@@ -67,16 +59,18 @@ public class FaceOfApp extends JFrame {
 
 	}
 
-	private void makeButtons() {
+	private void crateButtons() {
 		add = new JButton("Add");
 		change = new JButton("Change");
 		del = new JButton("Delete");
 		exit = new JButton("Exit");
 		countOfRecords = new JLabel();
-
-		change.addActionListener(new FaceWinChangeButtonListener(this));
-		add.addActionListener(new FaceWinAddButtonListener(this));
-		del.addActionListener(new FaceWinDeLButtonListener(this));
+		
+		FaceButtonListener listener = new FaceButtonListener(this);
+		change.addActionListener(listener);
+		add.addActionListener(listener);
+		del.addActionListener(listener);
+		exit.addActionListener(listener);
 
 		countOfRecords.setText("Records : " + tableModel.getRowCount());
 
@@ -90,14 +84,6 @@ public class FaceOfApp extends JFrame {
 		panelButtons.add(countOfRecords);
 		this.add(panelButtons, BorderLayout.SOUTH);
 
-		exit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-
-			}
-		});
 	}
 	
 	public int getSelectedUserId() {

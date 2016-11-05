@@ -4,8 +4,6 @@ import java.awt.GridBagConstraints;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -15,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import training.viewGroup.FaceOfApp;
-import training.viewGroup.listeners.AddWinOKButtonListener;
+import training.viewGroup.listeners.ModalWindowsButtonListener;
 import training.viewGroup.listeners.MyCaretListener;
 
 public class AddModalWindow {
@@ -34,20 +32,20 @@ public class AddModalWindow {
 		this.face = face;
 		columnsNames = face.getTableModel().getColumnsNames();
 
-		addDialog = new JDialog(face, "Enter information about the person", true);
+		addDialog = new JDialog(face, "Input information about the person", true);
 		addDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addDialog.setLayout(new GridBagLayout());
 		addDialog.setSize(450, 250);
 
-		makeLabelsAndTextFields();
-		makeButtons();
+		createLabelsAndTextFields();
+		createButtons();
 
 		addDialog.setVisible(true);
 		addDialog.pack();
 
 	}
 
-	private void makeLabelsAndTextFields() {
+	private void createLabelsAndTextFields() {
 		labelsList = new ArrayList<>();
 		textFieldsList = new ArrayList<>();
 
@@ -56,7 +54,7 @@ public class AddModalWindow {
 		for (int i = 1; i < columnsCount; i++) {
 			String name = makeNice(columnsNames.get(i));
 			labelsList.add(new JLabel(name));
-			if (i==1){
+			if (i == 1) {
 				textFieldsList.add(new JTextField("Required", 15));
 			} else {
 				textFieldsList.add(new JTextField(15));
@@ -74,7 +72,7 @@ public class AddModalWindow {
 
 	}
 
-	private void makeButtons() {
+	private void createButtons() {
 		int lastPosition = columnsNames.size();
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
@@ -88,14 +86,12 @@ public class AddModalWindow {
 		addDialog.add(status, new GridBagConstraints(0, lastPosition + 3, 0, 0, 0, 0, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				addDialog.setVisible(false);
-			}
-		});
+		ModalWindowsButtonListener listener = new ModalWindowsButtonListener(this, null);
+		cancelButton.setActionCommand("cancelAdd");
+		cancelButton.addActionListener(listener);
 
-		okButton.addActionListener(new AddWinOKButtonListener(this));
+		okButton.setActionCommand("okAdd");
+		okButton.addActionListener(listener);
 
 		textFieldsList.get(2).addCaretListener(new MyCaretListener(textFieldsList.get(2), status));
 
@@ -113,7 +109,7 @@ public class AddModalWindow {
 	public FaceOfApp getFace() {
 		return face;
 	}
-	
+
 	public ArrayList<JTextField> getTextFieldsList() {
 		return textFieldsList;
 	}
