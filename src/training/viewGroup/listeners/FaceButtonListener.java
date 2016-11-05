@@ -13,10 +13,10 @@ import training.viewGroup.ModalWindows.*;
 
 public class FaceButtonListener implements ActionListener {
 
-	private final String ADD_BUTTON = "Add";
-	private final String CHANGE_BUTTON = "Change";
-	private final String DELETE_BUTTON = "Delete";
-	private final String EXIT_BUTTON = "Exit";
+	private static final String ADD_BUTTON = "Add";
+	private static final String CHANGE_BUTTON = "Change";
+	private static final String DELETE_BUTTON = "Delete";
+	private static final String EXIT_BUTTON = "Exit";
 
 	FaceOfApp face;
 

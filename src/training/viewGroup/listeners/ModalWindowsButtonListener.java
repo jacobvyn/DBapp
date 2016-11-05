@@ -20,10 +20,10 @@ import training.viewGroup.ModalWindows.InputErrorModalWindow;
 
 public class ModalWindowsButtonListener implements ActionListener {
 
-	private final String OK_ADD = "okAdd";
-	private final String OK_CHANGE = "okChange";
-	private final String CANCEL_ADD = "cancelAdd";
-	private final String CANCEL_CHANGE = "cancelChange";
+	private static final String OK_ADD = "okAdd";
+	private static final String OK_CHANGE = "okChange";
+	private static final String CANCEL_ADD = "cancelAdd";
+	private static final String CANCEL_CHANGE = "cancelChange";
 
 	AddModalWindow addWindow;
 	ChangeModalWindow changeWindow;
@@ -32,6 +32,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 	public ModalWindowsButtonListener(AddModalWindow add, ChangeModalWindow change) {
 		this.addWindow = add;
 		this.changeWindow = change;
+		
 	}
 
 	@Override

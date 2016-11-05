@@ -16,41 +16,17 @@ public class DataFromDB {
 	private int columnCount;
 	private JSONObject columnsNames;
 	private JSONArray jArray;
-	private Collection<Person> personsList;
+
+	private String[] names;
 
 	public DataFromDB() {
 		initialize();
-		personsList = new ArrayList<>();
 	}
 
 	private void initialize() {
 		jArray = ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
 		setColumnsNames();
 		jsonArrayToTreeMap();
-		/*
-		personsList = fromJsonToList();
-				for(Person p :personsList){
-			System.out.println(p.toString());
-		}
-*/
-	}
-
-	private Collection<Person> fromJsonToList() {
-		Collection<Person> list = new ArrayList<>();
-		Gson gson = new GsonBuilder().create();
-
-		if (jArray != null) {
-			try {
-				for (int i = 0; i < jArray.length(); i++) {
-					JSONObject record = jArray.getJSONObject(i);
-					Person pers = gson.fromJson(record.toString(), Person.class);
-					list.add(pers);
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		return list;
 	}
 
 	private void jsonArrayToTreeMap() {
@@ -64,13 +40,22 @@ public class DataFromDB {
 					JSONObject record = jArray.getJSONObject(i);
 					ArrayList<String> row = new ArrayList<String>();
 					String cellsContent;
-
+					
 					for (int j = 0; j < columnsNames.length(); j++) {
 
 						cellsContent = columnsNames.getString(String.valueOf(j));
 						row.add(record.getString(cellsContent));
 					}
+					
+					/*
+					for (int j = 0; j < names.length; j++) {
 
+						cellsContent = names[j];
+						row.add(record.getString(cellsContent));
+					}
+					*/
+					
+					
 					resultTreeMap.put(record.getInt("id"), row);
 				}
 			} catch (JSONException e) {
@@ -94,6 +79,10 @@ public class DataFromDB {
 		try {
 
 			columnsNames = jArray.getJSONObject(jArray.length() - 1);
+			// ---------------
+			JSONObject obj = jArray.getJSONObject(5);
+			names = JSONObject.getNames(obj);
+			// ---------------
 			jArray.remove(jArray.length() - 1);
 		} catch (JSONException e) {
 			e.printStackTrace();
