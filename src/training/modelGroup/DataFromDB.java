@@ -1,32 +1,38 @@
 package training.modelGroup;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 public class DataFromDB {
 	private TreeMap<Integer, ArrayList<String>> resultTreeMap;
-	private int columnCount;
 	private JSONObject columnsNames;
 	private JSONArray jArray;
-
-	private String[] names;
+	private List<Person> list;
+	private ArrayList<String> columnsNamesNEW;
 
 	public DataFromDB() {
-		initialize();
+		init();
 	}
 
-	private void initialize() {
+	public DataFromDB(String does_not_matter) {
+		initNew();
+	}
+
+	private void init() {
 		jArray = ServletsCommunication.getDataFromDB(ServletsCommunication.GET_DATA_URL);
 		setColumnsNames();
 		jsonArrayToTreeMap();
+	}
+
+	private void initNew() {
+		list = ServletsCommunication.getDataFromDbNEW(ServletsCommunication.GET_DATA_URL);
+		setColumnsNamesNEW(list.get(0));
 	}
 
 	private void jsonArrayToTreeMap() {
@@ -40,22 +46,13 @@ public class DataFromDB {
 					JSONObject record = jArray.getJSONObject(i);
 					ArrayList<String> row = new ArrayList<String>();
 					String cellsContent;
-					
+
 					for (int j = 0; j < columnsNames.length(); j++) {
 
 						cellsContent = columnsNames.getString(String.valueOf(j));
 						row.add(record.getString(cellsContent));
 					}
-					
-					/*
-					for (int j = 0; j < names.length; j++) {
 
-						cellsContent = names[j];
-						row.add(record.getString(cellsContent));
-					}
-					*/
-					
-					
 					resultTreeMap.put(record.getInt("id"), row);
 				}
 			} catch (JSONException e) {
@@ -69,28 +66,32 @@ public class DataFromDB {
 		return resultTreeMap;
 	}
 
-	public int getColumnCount() {
-		columnCount = jArray.length();
-		return columnCount;
-	}
-
-	public void setColumnsNames() {
+	private void setColumnsNames() {
 		// get the object with tables' names and delete it from jArray
 		try {
 
 			columnsNames = jArray.getJSONObject(jArray.length() - 1);
-			// ---------------
-			JSONObject obj = jArray.getJSONObject(5);
-			names = JSONObject.getNames(obj);
-			// ---------------
 			jArray.remove(jArray.length() - 1);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void setColumnsNamesNEW(Person pers) {
+		Field[] fields = pers.getClass().getDeclaredFields();
+		columnsNamesNEW = new ArrayList<>();
+
+		for (Field field : fields) {
+			columnsNamesNEW.add(field.getName());
+		}
+	}
+
 	public JSONObject getColumnsNames() {
 		return columnsNames;
+	}
+
+	public ArrayList<String> getColumnsNamesNEW() {
+		return columnsNamesNEW;
 	}
 
 }

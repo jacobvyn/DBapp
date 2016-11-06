@@ -1,5 +1,5 @@
 package training.modelGroup;
-import java.lang.reflect.Field;
+
 import java.util.Date;
 
 /**
@@ -74,17 +74,8 @@ public class Person {
 	}
 
 	public String toString() {
-		return "[" + getFirstName() + ", " + getLastName() + ", " + getBirthDay() + ", " + getJob() + ", " + getComment() + "]";
+		return "[" + getFirstName() + ", " + getLastName() + ", " + getBirthDay() + ", " + getJob() + ", "
+				+ getComment() + "]";
 	}
-	/*
-	public static void main(String[] args) {
-		Person pers = new Person("Mike", "Tyson", new Date(1960, 10, 20), "boxer", "son of the bitch");
-		System.out.println(pers);
-		Field [] fields= pers.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			System.out.println(field.getName());
-		}
-	}
-	*/
-	
+
 }

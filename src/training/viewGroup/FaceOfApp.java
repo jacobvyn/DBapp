@@ -31,7 +31,7 @@ public class FaceOfApp extends JFrame {
 	private JTable table;
 
 	public FaceOfApp() {
-		super("My first internet-application");
+		super("My first internet application");
 		this.setSize(600, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());

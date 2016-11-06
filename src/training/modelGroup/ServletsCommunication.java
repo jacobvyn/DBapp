@@ -2,14 +2,20 @@ package training.modelGroup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class ServletsCommunication {
 
@@ -26,11 +32,12 @@ public class ServletsCommunication {
 			URL serverURL = new URL(totalQuery);
 
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
-			
+
 			System.out.println("[ServletsCommunication] App: Next query was send : " + totalQuery);
-			int responseCode=connect.getResponseCode();
-			String responseCodeMessage =connect.getResponseMessage();
-			System.out.println("[ServletsCommunication]  Answer from server : " + responseCode + " " + responseCodeMessage);
+			int responseCode = connect.getResponseCode();
+			String responseCodeMessage = connect.getResponseMessage();
+			System.out.println(
+					"[ServletsCommunication]  Answer from server : " + responseCode + " " + responseCodeMessage);
 
 		} catch (MalformedURLException e) {
 			System.out.println("Bad url  (ServletsCommunication.makeQueryByURL)");
@@ -43,20 +50,64 @@ public class ServletsCommunication {
 
 	public static JSONArray getDataFromDB(String url) {
 
+		// create url, open connection and print servers answer
+		HttpURLConnection connection = openConnection(url);
+
+		// read data from input stream and return result string
+		String jString = readData(connection);
+
+		JSONArray jsonArr = null;
 		try {
-			URL serverUrl = new URL(url);
+			jsonArr = new JSONArray(jString.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonArr;
 
-			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
+	}
 
+	public static List<Person> getDataFromDbNEW(String url) {
+
+		// create url, open connection and print servers answer
+		HttpURLConnection connection = openConnection(url);
+
+		// read data from input stream and return result string
+		String jString = readData(connection);
+
+		// create json array and convert to the list
+		List<Person> list = fromJsonStringToList(jString);
+
+		return list;
+
+	}
+
+	// =================================
+
+	private static HttpURLConnection openConnection(String url) {
+
+		URL serverUrl;
+		HttpURLConnection connection = null;
+
+		try {
+			serverUrl = new URL(url);
+			connection = (HttpURLConnection) serverUrl.openConnection();
 			connection.setDoInput(true);
-			System.out.println("[ServletsCommunication] Getting data... Response code is "
-					+ connection.getResponseCode() + " " + connection.getResponseMessage());
+			printServersAnswer(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-			InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+		return connection;
+	}
 
+	private static String readData(HttpURLConnection connection) {
+		StringBuilder jString = null;
+		try {
+
+			InputStream inputStream = connection.getInputStream();
+			InputStreamReader isr = new InputStreamReader(inputStream);
 			BufferedReader br = new BufferedReader(isr);
-
-			StringBuilder jString = new StringBuilder();
+			jString = new StringBuilder();
 			String c;
 
 			while ((c = br.readLine()) != null) {
@@ -64,27 +115,10 @@ public class ServletsCommunication {
 			}
 			br.close();
 
-			JSONArray jsonArr = new JSONArray(jString.toString());
-			System.out.println("[ServletsCommunication] Data is loaded succsesfully!");
-			System.out.println("-------");
-			return jsonArr;
-
-		} catch (MalformedURLException e) {
-			System.out.println("Something bad with URL");
-			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("IOException. Failed by creating bufferde reader");
-			e.getCause();
-			e.getLocalizedMessage();
-			e.getMessage();
-			e.printStackTrace();
-		} catch (JSONException e) {
-			System.out.println(
-					"Exception by creating JsonArray, source string is bad (ServletsCommunication.getDataFromDB)");
 			e.printStackTrace();
 		}
-		return null;
-
+		return jString.toString();
 	}
 
 	private static String makeQueryFromObject(JSONObject jObject) {
@@ -106,17 +140,43 @@ public class ServletsCommunication {
 		return query.toString();
 	}
 
-	public static void printData(String url) {
-
-		URL serverUrl;
+	private static List<Person> fromJsonStringToList(String jString) {
+		JSONArray jArray = null;
 		try {
-			serverUrl = new URL(url);
-			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
-			System.out.println("Connection is opend!");
-			connection.setDoInput(true);
-
-		} catch (MalformedURLException e) {
+			jArray = new JSONArray(jString.toString());
+		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+
+		if (jArray == null) {
+			System.out.println("jArray is null");
+			return null;
+		} else {
+			return createListFromJson(jArray);
+		}
+
+	}
+
+	private static List<Person> createListFromJson(JSONArray jArray) {
+		List<Person> list = new ArrayList<>();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd").create();
+		for (int i = 0; i < jArray.length(); i++) {
+			JSONObject record;
+			try {
+				record = jArray.getJSONObject(i);
+				Person pers = gson.fromJson(record.toString(), Person.class);
+				list.add(pers);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
+	private static void printServersAnswer(HttpURLConnection connection) {
+		try {
+			System.out.println("[ServletsCommunication] Getting data... " + connection.getResponseCode() + " "
+					+ connection.getResponseMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -32,7 +32,7 @@ public class MyTableModel extends AbstractTableModel {
 		columnsNames = jsonToArrayList(data.getColumnsNames());
 		columnCount = columnsNames.size();
 		dataList = new ArrayList<String[]>();
-		fillTheTable();
+		populateTable();
 
 	}
 
@@ -66,7 +66,7 @@ public class MyTableModel extends AbstractTableModel {
 
 	}
 
-	public void addDate(String[] row) {
+	public void addData(String[] row) {
 		String[] rowTable = new String[getColumnCount()];
 		rowTable = row;
 		dataList.add(rowTable);
@@ -77,12 +77,12 @@ public class MyTableModel extends AbstractTableModel {
 		initialize();
 	}
 
-	public void fillTheTable() {
+	public void populateTable() {
 		Set<Entry<Integer, ArrayList<String>>> entries = resultTreeMap.entrySet();
 
 		for (Entry<Integer, ArrayList<String>> entry : entries) {
 			ArrayList<String> row = entry.getValue();
-			addDate(row.toArray(new String[row.size()]));
+			addData(row.toArray(new String[row.size()]));
 		}
 
 	}
@@ -101,8 +101,5 @@ public class MyTableModel extends AbstractTableModel {
 		return columnNames;
 	}
 	
-	public ArrayList<String> getColumnsNames() {
-		return columnsNames;
-	}
-
+	
 }
