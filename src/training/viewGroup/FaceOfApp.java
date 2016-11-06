@@ -25,9 +25,10 @@ public class FaceOfApp extends JFrame {
 	private JLabel countOfRecords;
 
 	private int selectedUserId;
-	private int selecteRow;
+	private int selectedRow;
 
-	private MyTableModel tableModel;
+	//========================================= 1
+	private MyTableModelNew tableModel;
 	private JTable table;
 
 	public FaceOfApp() {
@@ -44,7 +45,8 @@ public class FaceOfApp extends JFrame {
 	}
 
 	private void makeTable() {
-		tableModel = new MyTableModel();
+		//========================================= 2
+		tableModel = new MyTableModelNew();
 
 		table = new JTable(tableModel);
 
@@ -52,7 +54,7 @@ public class FaceOfApp extends JFrame {
 		paneltable.setLayout(new FlowLayout());
 
 		JScrollPane scrolPane = new JScrollPane(table);
-		scrolPane.setPreferredSize(new Dimension(400, 400));
+		scrolPane.setPreferredSize(new Dimension(600, 500));
 		paneltable.add(scrolPane);
 
 		this.add(paneltable, BorderLayout.CENTER);
@@ -65,7 +67,7 @@ public class FaceOfApp extends JFrame {
 		del = new JButton("Delete");
 		exit = new JButton("Exit");
 		countOfRecords = new JLabel();
-		
+
 		FaceButtonListener listener = new FaceButtonListener(this);
 		change.addActionListener(listener);
 		add.addActionListener(listener);
@@ -85,7 +87,7 @@ public class FaceOfApp extends JFrame {
 		this.add(panelButtons, BorderLayout.SOUTH);
 
 	}
-	
+
 	public int getSelectedUserId() {
 		return selectedUserId;
 	}
@@ -98,25 +100,27 @@ public class FaceOfApp extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int[] selectedRows = table.getSelectedRows();
-				selecteRow = selectedRows[0];
-				Object user_id = tableModel.getValueAt(selecteRow, 0);
-				selectedUserId = Integer.valueOf((String) user_id);
+				selectedRow = selectedRows[0];
+				Object user_id = tableModel.getValueAt(selectedRow, 0);
+				//selectedUserId = Integer.valueOf((String) user_id);
+				selectedUserId = (int)  user_id;
 
 			}
 		});
 	}
 
-	public MyTableModel getTableModel() {
+	// =========================================3
+	public MyTableModelNew getTableModel() {
 		return tableModel;
 	}
 
 	public String[] getSelectedPerson() {
-		String[] selectedPers = tableModel.getRow(selecteRow);
+		String[] selectedPers = tableModel.getRow(selectedRow);
 		return selectedPers;
 	}
 
 	public int getSelecteRow() {
-		return selecteRow;
+		return selectedRow;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -22,7 +23,7 @@ public class AddModalWindow {
 
 	private ArrayList<JLabel> labelsList;
 	private ArrayList<JTextField> textFieldsList;
-	private ArrayList<String> columnsNames;
+	private List<String> columnsNames;
 
 	private JLabel status;
 	private JButton okButton;
@@ -114,7 +115,7 @@ public class AddModalWindow {
 		return textFieldsList;
 	}
 
-	public ArrayList<String> getColumnsNames() {
+	public List<String> getColumnsNames() {
 		return columnsNames;
 	}
 

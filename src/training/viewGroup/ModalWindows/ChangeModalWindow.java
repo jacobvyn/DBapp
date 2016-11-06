@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,15 +26,15 @@ public class ChangeModalWindow {
 	private JButton cancelButton;
 	private JLabel status;
 
-	ArrayList<JLabel> labelsList;
-	ArrayList<JTextField> textFieldsList;
-	ArrayList<String> columnsNames;
+	private ArrayList<JLabel> labelsList;
+	private ArrayList<JTextField> textFieldsList;
+	private List<String> columnsNames;
 
 	/// **** previous values to check changes
-	ArrayList<String> prevValuesOfFields;
+	private ArrayList<String> prevValuesOfFields;
 
-	String[] selectedPersonTochange;
-
+	private String[] selectedPersonTochange;
+		
 	public ChangeModalWindow(FaceOfApp face) {
 		this.face = face;
 		columnsNames = face.getTableModel().getColumnsNames();
@@ -119,7 +120,7 @@ public class ChangeModalWindow {
 		return textFieldsList;
 	}
 
-	public ArrayList<String> getColumnsNames() {
+	public List<String> getColumnsNames() {
 		return columnsNames;
 	}
 

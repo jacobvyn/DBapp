@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JTextField;
 
@@ -71,7 +72,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 
 	private JSONObject collectInfo() {
 		ArrayList<JTextField> textFieldsList = addWindow.getTextFieldsList();
-		ArrayList<String> columnsNames = addWindow.getColumnsNames();
+		List<String> columnsNames = addWindow.getColumnsNames();
 		columnsNames.remove(0);
 
 		JSONObject addJObject = new JSONObject();
@@ -144,9 +145,9 @@ public class ModalWindowsButtonListener implements ActionListener {
 	}
 
 	private JSONObject collectData_new() {
-		ArrayList<String> prevValues = changeWindow.getPrevValuesOfFields();
-		ArrayList<String> newValues = getNewValues();
-		ArrayList<String> columnsNames = changeWindow.getColumnsNames();
+		List<String> prevValues = changeWindow.getPrevValuesOfFields();
+		List<String> newValues = getNewValues();
+		List<String> columnsNames = changeWindow.getColumnsNames();
 		columnsNames.remove(0); // delete cell "user id"
 
 		JSONObject jObject = new JSONObject();

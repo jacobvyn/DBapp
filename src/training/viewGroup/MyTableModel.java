@@ -1,7 +1,7 @@
 package training.viewGroup;
 
 import java.util.ArrayList;
-
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -12,21 +12,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import training.modelGroup.DataFromDB;
+
 import training.viewGroup.ModalWindows.AddModalWindow;
 
 public class MyTableModel extends AbstractTableModel {
 
-	private ArrayList<String> columnsNames;
-		private ArrayList<String[]> dataList;
+	private List<String> columnsNames;
+	private ArrayList<String[]> dataList;
 	private TreeMap<Integer, ArrayList<String>> resultTreeMap;
-
-	private int columnCount;// = 6;
+	private int columnCount;
 
 	public MyTableModel() {
-		initialize();
+		init();
 	}
+	
 
-	private void initialize() {
+	private void init() {
 		DataFromDB data = new DataFromDB();
 		resultTreeMap = data.getResultTreeMap();
 		columnsNames = jsonToArrayList(data.getColumnsNames());
@@ -48,9 +49,10 @@ public class MyTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(int columnIndex) {
-		if (columnIndex==0) return "ID";
-		else 
-		return AddModalWindow.makeNice(columnsNames.get(columnIndex));
+		if (columnIndex == 0)
+			return "ID";
+		else
+			return AddModalWindow.makeNice(columnsNames.get(columnIndex));
 
 	}
 
@@ -60,24 +62,24 @@ public class MyTableModel extends AbstractTableModel {
 		return row[columnIndex];
 	}
 
-	public String[] getRow(int rowIndex) {
+	private  String[] getRow(int rowIndex) {
 		String[] row = dataList.get(rowIndex);
 		return row;
 
 	}
 
-	public void addData(String[] row) {
+	private void addData(String[] row) {
 		String[] rowTable = new String[getColumnCount()];
 		rowTable = row;
 		dataList.add(rowTable);
 	}
 
-	public void refreshDataList() {
+	private void refreshDataList() {
 		dataList.clear();
-		initialize();
+		init();
 	}
 
-	public void populateTable() {
+	private void populateTable() {
 		Set<Entry<Integer, ArrayList<String>>> entries = resultTreeMap.entrySet();
 
 		for (Entry<Integer, ArrayList<String>> entry : entries) {
@@ -94,12 +96,14 @@ public class MyTableModel extends AbstractTableModel {
 			try {
 				columnNames.add(ob.getString(String.valueOf(i)));
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return columnNames;
 	}
-	
-	
+
+	private  List<String> getColumnsNames() {
+		return columnsNames;
+	}
+
 }

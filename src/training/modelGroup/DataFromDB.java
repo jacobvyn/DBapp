@@ -13,7 +13,7 @@ public class DataFromDB {
 	private TreeMap<Integer, ArrayList<String>> resultTreeMap;
 	private JSONObject columnsNames;
 	private JSONArray jArray;
-	private List<Person> list;
+	private List<Person> listNew;
 	private ArrayList<String> columnsNamesNEW;
 
 	public DataFromDB() {
@@ -31,8 +31,8 @@ public class DataFromDB {
 	}
 
 	private void initNew() {
-		list = ServletsCommunication.getDataFromDbNEW(ServletsCommunication.GET_DATA_URL);
-		setColumnsNamesNEW(list.get(0));
+		listNew = ServletsCommunication.getDataFromDbNEW(ServletsCommunication.GET_DATA_URL);
+		setColumnsNamesNEW(listNew.get(0));
 	}
 
 	private void jsonArrayToTreeMap() {
@@ -92,6 +92,10 @@ public class DataFromDB {
 
 	public ArrayList<String> getColumnsNamesNEW() {
 		return columnsNamesNEW;
+	}
+
+	public List<Person> getListNew() {
+		return listNew;
 	}
 
 }
