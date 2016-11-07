@@ -55,6 +55,7 @@ public class AddModalWindow {
 		for (int i = 1; i < columnsCount; i++) {
 			String name = makeNice(columnsNames.get(i));
 			labelsList.add(new JLabel(name));
+			// for the first name field
 			if (i == 1) {
 				textFieldsList.add(new JTextField("Required", 15));
 			} else {

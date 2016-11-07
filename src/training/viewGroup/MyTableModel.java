@@ -62,7 +62,7 @@ public class MyTableModel extends AbstractTableModel {
 		return row[columnIndex];
 	}
 
-	private  String[] getRow(int rowIndex) {
+	public  String[] getRow(int rowIndex) {
 		String[] row = dataList.get(rowIndex);
 		return row;
 
@@ -74,7 +74,7 @@ public class MyTableModel extends AbstractTableModel {
 		dataList.add(rowTable);
 	}
 
-	private void refreshDataList() {
+	public void refreshDataList() {
 		dataList.clear();
 		init();
 	}
@@ -102,7 +102,7 @@ public class MyTableModel extends AbstractTableModel {
 		return columnNames;
 	}
 
-	private  List<String> getColumnsNames() {
+	public  List<String> getColumnsNames() {
 		return columnsNames;
 	}
 

@@ -73,8 +73,14 @@ public class Person {
 		this.comment = comment;
 	}
 
+	@Override
 	public String toString() {
 		return "[" + getFirstName() + ", " + getLastName() + ", " + getBirthDay() + ", " + getJob() + ", "
+				+ getComment() + "]";
+	}
+	
+	public String toMyString() {
+		return "[("+id+")" + getFirstName() + ", " + getLastName() + ", " + getBirthDay() + ", " + getJob() + ", "
 				+ getComment() + "]";
 	}
 

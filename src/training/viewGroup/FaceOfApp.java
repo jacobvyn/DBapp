@@ -27,9 +27,29 @@ public class FaceOfApp extends JFrame {
 	private int selectedUserId;
 	private int selectedRow;
 
-	//========================================= 1
+	// ============================================= 1
 	private MyTableModelNew tableModel;
 	private JTable table;
+
+	// ==============================================2
+	public MyTableModelNew getTableModel() {
+		return tableModel;
+	}
+
+	private void createTable() {
+		// ========================================= 3
+		tableModel = new MyTableModelNew();
+		table = new JTable(tableModel);
+
+		JPanel paneltable = new JPanel();
+		paneltable.setLayout(new FlowLayout());
+
+		JScrollPane scrolPane = new JScrollPane(table);
+		scrolPane.setPreferredSize(new Dimension(550, 500));
+		paneltable.add(scrolPane);
+
+		this.add(paneltable, BorderLayout.CENTER);
+	}
 
 	public FaceOfApp() {
 		super("My first internet application");
@@ -37,31 +57,14 @@ public class FaceOfApp extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 
-		makeTable();
-		crateButtons();
+		createTable();
+		createButtons();
 		setSelectedUserIdAndRow();
 		this.setVisible(true);
 		this.pack();
 	}
 
-	private void makeTable() {
-		//========================================= 2
-		tableModel = new MyTableModelNew();
-
-		table = new JTable(tableModel);
-
-		JPanel paneltable = new JPanel();
-		paneltable.setLayout(new FlowLayout());
-
-		JScrollPane scrolPane = new JScrollPane(table);
-		scrolPane.setPreferredSize(new Dimension(600, 500));
-		paneltable.add(scrolPane);
-
-		this.add(paneltable, BorderLayout.CENTER);
-
-	}
-
-	private void crateButtons() {
+	private void createButtons() {
 		add = new JButton("Add");
 		change = new JButton("Change");
 		del = new JButton("Delete");
@@ -88,30 +91,20 @@ public class FaceOfApp extends JFrame {
 
 	}
 
-	public int getSelectedUserId() {
-		return selectedUserId;
-	}
-
 	public void setSelectedUserIdAndRow() {
 
-		ListSelectionModel selModel = table.getSelectionModel();
-		selModel.addListSelectionListener(new ListSelectionListener() {
+		ListSelectionModel selectedModel = table.getSelectionModel();
+		selectedModel.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int[] selectedRows = table.getSelectedRows();
 				selectedRow = selectedRows[0];
-				Object user_id = tableModel.getValueAt(selectedRow, 0);
-				//selectedUserId = Integer.valueOf((String) user_id);
-				selectedUserId = (int)  user_id;
-
+				Object id = tableModel.getValueAt(selectedRow, 0);
+			//	selectedUserId = Integer.valueOf((String)id);
+				selectedUserId = (int) id;
 			}
 		});
-	}
-
-	// =========================================3
-	public MyTableModelNew getTableModel() {
-		return tableModel;
 	}
 
 	public String[] getSelectedPerson() {
@@ -119,15 +112,15 @@ public class FaceOfApp extends JFrame {
 		return selectedPers;
 	}
 
-	public int getSelecteRow() {
-		return selectedRow;
-	}
-
 	@Override
 	public void repaint() {
 		tableModel.refreshDataList();
 		countOfRecords.setText("Records : " + tableModel.getRowCount());
 		super.repaint();
+	}
+
+	public int getSelectedUserId() {
+		return selectedUserId;
 	}
 
 	// ===========================================================================================================================
