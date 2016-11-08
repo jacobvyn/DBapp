@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import training.viewGroup.FaceOfApp;
+import training.viewGroup.MyTableModelNew;
 import training.viewGroup.listeners.ModalWindowsButtonListener;
 import training.viewGroup.listeners.MyCaretListener;
 
@@ -50,20 +51,25 @@ public class AddModalWindow {
 		labelsList = new ArrayList<>();
 		textFieldsList = new ArrayList<>();
 
-		int columnsCount = columnsNames.size();
+		int fieldsAmount = columnsNames.size();
 
-		for (int i = 1; i < columnsCount; i++) {
+		// start form index 1 to prevent creating of jtexField of ID
+		for (int i = 1; i < fieldsAmount; i++) {
 			String name = makeNice(columnsNames.get(i));
 			labelsList.add(new JLabel(name));
-			// for the first name field
-			if (i == 1) {
-				textFieldsList.add(new JTextField("Required", 15));
-			} else {
-				textFieldsList.add(new JTextField(15));
+			JTextField field = new JTextField(15);
+
+			field.setName(name);
+			if (field.getName().contains("First")) {
+				field.setText("Required");
 			}
+			if (field.getName().contains("day")) {
+				field.setText(MyTableModelNew.DEFAULT_DATE);
+			}
+			textFieldsList.add(field);
 		}
 
-		for (int i = 0; i < columnsCount - 1; i++) {
+		for (int i = 0; i < fieldsAmount - 1; i++) {
 
 			addDialog.add(labelsList.get(i), new GridBagConstraints(0, i + 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
 					GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));

@@ -16,6 +16,8 @@ public class MyTableModelNew extends AbstractTableModel {
 	private List<Person> list;
 	// for date class formating
 	public static final String DATE_PATTERN = "yyyy-mm-dd";
+	public static final String DEFAULT_DATE = "1970-03-08";
+
 	public static final SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_PATTERN);
 
 	public MyTableModelNew() {
@@ -25,7 +27,7 @@ public class MyTableModelNew extends AbstractTableModel {
 	private void init() {
 		DataFromDBNew data = new DataFromDBNew();
 		columnsNames = data.getColumnsNames();
-		list = data.getList();
+			list = data.getList();
 		sortListOfPersons();
 		dataTable = new ArrayList<>();
 		populateTable();

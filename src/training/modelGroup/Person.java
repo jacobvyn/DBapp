@@ -75,13 +75,47 @@ public class Person {
 
 	@Override
 	public String toString() {
-		return "[" + getFirstName() + ", " + getLastName() + ", " + getBirthDay() + ", " + getJob() + ", "
-				+ getComment() + "]";
+		return "[ ID : " + id + " , Name : " + firstName + ", Last Name : " + lastName + ", Birth day : " + birthDay
+				+ ", Job : " + job + ", Comment : " + comment + "]";
 	}
-	
-	public String toMyString() {
-		return "[("+id+")" + getFirstName() + ", " + getLastName() + ", " + getBirthDay() + ", " + getJob() + ", "
-				+ getComment() + "]";
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Person other = (Person) obj;
+		if (birthDay == null) {
+			if (other.birthDay != null)
+				return false;
+		} else if (!birthDay.equals(other.birthDay))
+			return false;
+		if (comment == null) {
+			if (other.comment != null)
+				return false;
+		} else if (!comment.equals(other.comment))
+			return false;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (id != other.id)
+			return false;
+		if (job == null) {
+			if (other.job != null)
+				return false;
+		} else if (!job.equals(other.job))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		return true;
 	}
 
 }

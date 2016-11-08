@@ -18,7 +18,7 @@ public class DataFromDBNew {
 		Person pers = list.get(0);
 		Field[] fields = pers.getClass().getDeclaredFields();
 		columnsNames = new ArrayList<>();
-
+		//prevent including id field
 		for (Field field : fields) {
 			columnsNames.add(field.getName());
 		}

@@ -1,5 +1,6 @@
 package test;
 
+import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -14,7 +15,15 @@ public class Test {
 		/// makeTest1();
 		// makeTest2();
 		// makeTest3();
-		makeTest4();
+		//makeTest4();
+		Point point = new Point(1, 2);
+		System.out.println("first point " +point.toString());
+		maketest5(point);
+		System.out.println("second point " +point.toString());
+	}
+
+	private static void maketest5(Point point) {
+		point.y=point.y+2;
 	}
 
 	private static void makeTest4() {
@@ -39,7 +48,7 @@ public class Test {
 		});
 
 		for (Person person : list) {
-			System.out.println(person.toMyString());
+			//System.out.println(person.toMyString());
 		}
 
 	}

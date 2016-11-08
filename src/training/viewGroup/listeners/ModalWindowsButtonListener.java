@@ -9,8 +9,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 
 import org.json.JSONException;
@@ -18,6 +21,7 @@ import org.json.JSONObject;
 
 import training.modelGroup.Person;
 import training.modelGroup.ServletsCommunication;
+import training.viewGroup.FaceOfApp;
 import training.viewGroup.MyTableModelNew;
 import training.viewGroup.ModalWindows.AddModalWindow;
 import training.viewGroup.ModalWindows.ChangeModalWindow;
@@ -68,16 +72,9 @@ public class ModalWindowsButtonListener implements ActionListener {
 
 	private void addButton_Logic() {
 		JSONObject addJObject = collectInfo();
-		/*
-		System.out.println("=================");
-		Person person = collectInfoNEW();
-		System.out.println(person);
-		System.out.println("=================");
-		*/
+		// Person person = collectInfoNEW();
 		ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
-
-		addModalWindow.getFace().repaint();
-		addModalWindow.getAddDialog().setVisible(false);
+		repaintAndHide(addModalWindow.getFace(), addModalWindow.getAddDialog());
 	}
 
 	private void changeButton_Logic() {
@@ -100,9 +97,10 @@ public class ModalWindowsButtonListener implements ActionListener {
 				e1.printStackTrace();
 			}
 			ServletsCommunication.makeQueryByURL(ServletsCommunication.CHANGE_URL, jObject);
-			changeModalWindow.getFace().repaint();
+
 		}
-		changeModalWindow.getChangeDialog().setVisible(false);
+
+		repaintAndHide(changeModalWindow.getFace(), changeModalWindow.getChangeDialog());
 	}
 
 	// to make better or del
@@ -110,7 +108,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 
 		List<String> newValues = getNewValues();
 		List<String> columnsNames = changeModalWindow.getColumnsNames();
-		columnsNames.remove(0); // delete cell "user id"
+		// columnsNames.remove(0); // delete cell "user id"
 
 		JSONObject jObject = new JSONObject();
 		try {
@@ -129,7 +127,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 		return jObject;
 	}
 
-	// to make better or del
+	// ??????
 	private JSONObject collectInfo() {
 		ArrayList<JTextField> textFieldsList = addModalWindow.getTextFieldsList();
 		List<String> columnsNames = addModalWindow.getColumnsNames();
@@ -161,7 +159,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 
 	}
 
-	// to make better or del
+	// ????
 	private ArrayList<String> getNewValues() {
 		ArrayList<JTextField> textFieldsList = changeModalWindow.getTextFieldsList();
 		ArrayList<String> newValues = new ArrayList<>();
@@ -171,7 +169,115 @@ public class ModalWindowsButtonListener implements ActionListener {
 		return newValues;
 	}
 
-	// to make better or del
+	
+	// new!!
+	private Person collectInfoNEW() {
+		ArrayList<JTextField> textFieldsList = addModalWindow.getTextFieldsList();
+		Map<String, Object> personAsMap = fromFieldsToMap(textFieldsList);
+
+		Person person = new Person();
+		Method[] methods = person.getClass().getDeclaredMethods();
+		ArrayList<Method> setters = getOnlySetters(methods);
+		fromListToPerson(person, setters, personAsMap);
+
+		return person;
+
+	}
+
+	private ArrayList<Method> getOnlySetters(Method[] methods) {
+		ArrayList<Method> setters = new ArrayList<>();
+		for (Method method : methods) {
+			String methodsName = method.getName();
+			if (methodsName.contains("set") && !methodsName.contains("Id")) {
+				setters.add(method);
+			}
+		}
+		return setters;
+	}
+
+	private void fromListToPerson(Person person, ArrayList<Method> setters, Map<String, Object> map) {
+		List<String> columnsNames = addModalWindow.getColumnsNames();
+
+		for (int i = 0; i < setters.size(); i++) {
+			String methodsName = setters.get(i).getName();
+
+			for (int j = 0; j < columnsNames.size(); j++) {
+				String propertyName = columnsNames.get(j);
+
+				if (methodsName.equalsIgnoreCase("set" + propertyName)) {
+					Object value = map.get(propertyName);
+					invokeMethod(person, setters.get(i), value);
+					break;
+				}
+			}
+		}
+
+	}
+
+	private Map<String, Object> fromFieldsToMap(ArrayList<JTextField> list) {
+		List<String> columnsNames = addModalWindow.getColumnsNames();
+		Map<String, Object> map = new HashMap<>();
+
+		for (JTextField field : list) {
+			String fieldName = field.getName().toLowerCase();
+
+			for (String propertyKey : columnsNames) {
+				if (fieldName.equalsIgnoreCase(propertyKey)) {
+					Object value = field.getText();
+					if (propertyKey.toLowerCase().contains("day")) {
+						parseDate(propertyKey, value, map);
+					} else {
+						map.put(propertyKey, value);
+					}
+					break;
+				}
+			}
+		}
+		return map;
+	}
+
+	private void invokeMethod(Person person, Method method, Object object) {
+		method.setAccessible(true);
+		try {
+			if (object instanceof String) {
+				String value = (String) object;
+				method.invoke(person, value);
+			} else if (object instanceof Date) {
+				Date date = (Date) object;
+				method.invoke(person, date);
+			}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void parseDate(String key, Object value, Map<String, Object> list) {
+
+		Date date = parseDate((String) value);
+		if (date == null) {
+			list.put(key, new Date(1970, 0, 1));
+		} else {
+			list.put(key, date);
+		}
+
+	}
+
+	private Date parseDate(String toParse) {
+		Date date = null;
+		try {
+			date = MyTableModelNew.FORMATTER.parse(toParse);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
+
+	private void repaintAndHide(FaceOfApp face, JDialog dialog) {
+		face.repaint();
+		dialog.setVisible(false);
+	}
+
 	public static boolean checkDateFormat(String value) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(MyTableModelNew.DATE_PATTERN);
@@ -186,96 +292,5 @@ public class ModalWindowsButtonListener implements ActionListener {
 			ex.printStackTrace();
 		}
 		return date != null;
-	}
-
-	private Person collectInfoNEW() {
-		ArrayList<JTextField> textFieldsList = addModalWindow.getTextFieldsList();
-		List<Object> personAsList = collectDataFromJTextFields(textFieldsList);
-
-		Person person = new Person();
-		Method[] methods = person.getClass().getDeclaredMethods();
-		ArrayList<Method> setters = getOnlySetters(methods);
-		fromListToPerson(person, setters, personAsList);
-
-		return null;
-
-	}
-
-	private ArrayList<Method> getOnlySetters(Method[] methods) {
-		ArrayList<Method> setters = new ArrayList<>();
-		for (Method method : methods) {
-			String methodsName = method.getName();
-			if (methodsName.contains("set") && !methodsName.contains("id")) {
-				setters.add(method);
-			}
-		}
-		return setters;
-	}
-
-	private void fromListToPerson(Person person, ArrayList<Method> setters, List<Object> personAsList) {
-		List<String> columnsNames = addModalWindow.getColumnsNames();
-		columnsNames.remove(0); // remove id column name
-
-		for (int i = 0; i < setters.size(); i++) {
-			String methodsName = setters.get(i).getName();
-			String propertyName = columnsNames.get(i);
-			if (methodsName.contains(propertyName)) {
-				invokeMethod(person, setters.get(i), personAsList.get(i));
-			}
-		}
-
-	}
-
-	private void invokeMethod(Person person, Method method, Object object) {
-		method.setAccessible(true);
-		try {
-			if (object instanceof String) {
-				String value = (String) object;
-				method.invoke(person, value);
-			} else if (object instanceof Date) {
-				Date date = (Date) object;
-				method.invoke(person, date);
-			}
-
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	private List<Object> collectDataFromJTextFields(ArrayList<JTextField> textFieldsList) {
-		List<Object> list = new ArrayList<>();
-		for (JTextField field : textFieldsList) {
-			String fieldsName = field.getName();
-			if (fieldsName.contains("day")) {
-				parseDate(field.getText(), list);
-			} else {
-				list.add(field.getText());
-			}
-		}
-		return null;
-	}
-
-	@SuppressWarnings("deprecation")
-	private void parseDate(String toParse, List<Object> list) {
-
-		Date date = parseDate(toParse);
-		if (date == null) {
-			list.add(new Date(1970, 0, 1));
-		} else {
-			list.add(date);
-		}
-
-	}
-
-	private Date parseDate(String toParse) {
-		Date date = null;
-		try {
-			date = MyTableModelNew.FORMATTER.parse(toParse);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return date;
 	}
 }
