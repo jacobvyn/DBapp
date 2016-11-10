@@ -20,7 +20,7 @@ public class MyCaretListener implements CaretListener {
 	public void caretUpdate(CaretEvent e) {
 
 		String date = textField.getText();
-		if (ModalWindowsButtonListener.checkDateFormat(date) || date.length() == 0) {
+		if (DialogButtonListener.checkDateFormat(date) || date.length() == 0) {
 			status.setForeground(Color.black);
 			status.setText("Status : clear");
 		} else {

@@ -27,17 +27,10 @@ public class FaceOfApp extends JFrame {
 	private int selectedUserId;
 	private int selectedRow;
 
-	// ============================================= 1
 	private MyTableModelNew tableModel;
 	private JTable table;
 
-	// ==============================================2
-	public MyTableModelNew getTableModel() {
-		return tableModel;
-	}
-
 	private void createTable() {
-		// ========================================= 3
 		tableModel = new MyTableModelNew();
 		table = new JTable(tableModel);
 
@@ -79,15 +72,14 @@ public class FaceOfApp extends JFrame {
 
 		countOfRecords.setText("Records : " + tableModel.getRowCount());
 
-		JPanel panelButtons = new JPanel();
-		panelButtons.setLayout(new FlowLayout());
-
-		panelButtons.add(add);
-		panelButtons.add(change);
-		panelButtons.add(del);
-		panelButtons.add(exit);
-		panelButtons.add(countOfRecords);
-		this.add(panelButtons, BorderLayout.SOUTH);
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(add);
+		buttons.add(change);
+		buttons.add(del);
+		buttons.add(exit);
+		buttons.add(countOfRecords);
+		this.add(buttons, BorderLayout.SOUTH);
 
 	}
 
@@ -101,10 +93,14 @@ public class FaceOfApp extends JFrame {
 				int[] selectedRows = table.getSelectedRows();
 				selectedRow = selectedRows[0];
 				Object id = tableModel.getValueAt(selectedRow, 0);
-			//	selectedUserId = Integer.valueOf((String)id);
+				// selectedUserId = Integer.valueOf((String)id);
 				selectedUserId = (int) id;
 			}
 		});
+	}
+
+	public MyTableModelNew getTableModel() {
+		return tableModel;
 	}
 
 	public String[] getSelectedPerson() {

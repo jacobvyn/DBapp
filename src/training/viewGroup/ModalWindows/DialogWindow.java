@@ -15,12 +15,17 @@ import javax.swing.JTextField;
 
 import training.viewGroup.FaceOfApp;
 import training.viewGroup.MyTableModelNew;
-import training.viewGroup.listeners.ModalWindowsButtonListener;
+import training.viewGroup.listeners.DialogButtonListener;
 import training.viewGroup.listeners.MyCaretListener;
 
-public class AddModalWindow {
+public class DialogWindow {
+
+	public static enum MODE {
+		ADD, CHANGE;
+	}
+
 	private FaceOfApp face;
-	private JDialog addDialog;
+	private JDialog dialog;
 
 	private ArrayList<JLabel> labelsList;
 	private ArrayList<JTextField> textFieldsList;
@@ -29,55 +34,98 @@ public class AddModalWindow {
 	private JLabel status;
 	private JButton okButton;
 	private JButton cancelButton;
+	private String[] personTochange;
 
-	public AddModalWindow(FaceOfApp face) {
+	public DialogWindow(FaceOfApp face, MODE mode) {
 		this.face = face;
 		columnsNames = face.getTableModel().getColumnsNames();
 
-		addDialog = new JDialog(face, "Input information about the person", true);
-		addDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		addDialog.setLayout(new GridBagLayout());
-		addDialog.setSize(450, 250);
+		init(mode);
+
+	}
+
+	private void init(MODE mode) {
+
+		dialog = new JDialog(face, true);
+		dialog.setLayout(new GridBagLayout());
+
+		labelsList = new ArrayList<>();
+		textFieldsList = new ArrayList<>();
 
 		createLabelsAndTextFields();
 		createButtons();
 
-		addDialog.setVisible(true);
-		addDialog.pack();
+		switch (mode) {
+
+		case ADD:
+			dialog.setTitle("New person");
+			populateTextFields(mode);
+			okButton.setActionCommand("okAdd");
+			break;
+
+		case CHANGE:
+			dialog.setTitle("What information  would you like to change?");
+			populateTextFields(mode);
+			okButton.setActionCommand("okChange");
+			break;
+
+		default:
+			break;
+		}
+
+		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		dialog.setSize(450, 250);
+		dialog.setVisible(true);
+		dialog.pack();
 
 	}
 
+	private void populateTextFields(MODE mode) {
+		switch (mode) {
+		case ADD:
+
+			for (JTextField field : textFieldsList) {
+				if (field.getName().contains("First")) {
+					field.setText("Required");
+				}
+				if (field.getName().contains("day")) {
+					field.setText(MyTableModelNew.DEFAULT_DATE);
+				}
+			}
+
+			break;
+		case CHANGE:
+			personTochange = face.getSelectedPerson();
+			for (int i = 0; i < textFieldsList.size(); i++) {
+				textFieldsList.get(i).setText(personTochange[i + 1]);
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
 	private void createLabelsAndTextFields() {
-		labelsList = new ArrayList<>();
-		textFieldsList = new ArrayList<>();
 
 		int fieldsAmount = columnsNames.size();
 
 		// start form index 1 to prevent creating of jtexField of ID
 		for (int i = 1; i < fieldsAmount; i++) {
-			String name = makeNice(columnsNames.get(i));
+			String name = DialogWindow.makeNice(columnsNames.get(i));
 			labelsList.add(new JLabel(name));
 			JTextField field = new JTextField(15);
-
 			field.setName(name);
-			if (field.getName().contains("First")) {
-				field.setText("Required");
-			}
-			if (field.getName().contains("day")) {
-				field.setText(MyTableModelNew.DEFAULT_DATE);
-			}
 			textFieldsList.add(field);
 		}
 
+		// putt all to the layout
 		for (int i = 0; i < fieldsAmount - 1; i++) {
-
-			addDialog.add(labelsList.get(i), new GridBagConstraints(0, i + 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
+			dialog.add(labelsList.get(i), new GridBagConstraints(0, i + 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
 					GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
-			addDialog.add(textFieldsList.get(i), new GridBagConstraints(1, i + 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
+			dialog.add(textFieldsList.get(i), new GridBagConstraints(1, i + 1, 1, 1, 1, 1, GridBagConstraints.NORTH,
 					GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 		}
-
 	}
 
 	private void createButtons() {
@@ -86,19 +134,17 @@ public class AddModalWindow {
 		cancelButton = new JButton("Cancel");
 		status = new JLabel("Status : clear");
 
-		addDialog.add(okButton, new GridBagConstraints(0, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
+		dialog.add(okButton, new GridBagConstraints(0, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-		addDialog.add(cancelButton, new GridBagConstraints(1, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
-				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
-
-		addDialog.add(status, new GridBagConstraints(0, lastPosition + 3, 0, 0, 0, 0, GridBagConstraints.NORTH,
+		dialog.add(cancelButton, new GridBagConstraints(1, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 
-		ModalWindowsButtonListener listener = new ModalWindowsButtonListener(this, null);
-		cancelButton.setActionCommand("cancelAdd");
+		dialog.add(status, new GridBagConstraints(0, lastPosition + 3, 0, 0, 0, 0, GridBagConstraints.NORTH,
+				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
+
+		DialogButtonListener listener = new DialogButtonListener(this);
+		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(listener);
-
-		okButton.setActionCommand("okAdd");
 		okButton.addActionListener(listener);
 
 		textFieldsList.get(2).addCaretListener(new MyCaretListener(textFieldsList.get(2), status));
@@ -110,8 +156,8 @@ public class AddModalWindow {
 		return newStr.replace('_', ' ');
 	}
 
-	public JDialog getAddDialog() {
-		return addDialog;
+	public JDialog getDialog() {
+		return dialog;
 	}
 
 	public FaceOfApp getFace() {

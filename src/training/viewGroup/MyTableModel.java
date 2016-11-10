@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 import training.modelGroup.DataFromDB;
 
-import training.viewGroup.ModalWindows.AddModalWindow;
+import training.viewGroup.ModalWindows.DialogWindow;
 
 public class MyTableModel extends AbstractTableModel {
 
@@ -52,7 +52,7 @@ public class MyTableModel extends AbstractTableModel {
 		if (columnIndex == 0)
 			return "ID";
 		else
-			return AddModalWindow.makeNice(columnsNames.get(columnIndex));
+			return DialogWindow.makeNice(columnsNames.get(columnIndex));
 
 	}
 

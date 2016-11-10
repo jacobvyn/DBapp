@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import training.modelGroup.ServletsCommunication;
 import training.viewGroup.FaceOfApp;
 import training.viewGroup.ModalWindows.*;
+import training.viewGroup.ModalWindows.DialogWindow.MODE;
 
 public class FaceButtonListener implements ActionListener {
 
@@ -25,20 +26,20 @@ public class FaceButtonListener implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		String command = e.getActionCommand();
+	public void actionPerformed(ActionEvent event) {
+		String command = event.getActionCommand();
 
 		switch (command) {
 		case ADD_BUTTON:
-			new AddModalWindow(face);
+			new DialogWindow(face, MODE.ADD);
 			break;
 
 		case CHANGE_BUTTON:
-			new ChangeModalWindow(face);
+			new DialogWindow(face, MODE.CHANGE);
 			break;
 
 		case DELETE_BUTTON:
-			deleteLogic(e);
+			deleteLogic(event);
 			break;
 
 		case EXIT_BUTTON:
@@ -51,7 +52,7 @@ public class FaceButtonListener implements ActionListener {
 
 	}
 
-	private void deleteLogic(ActionEvent e) {
+	private void deleteLogic(ActionEvent event) {
 		JSONObject jObject = new JSONObject();
 
 		try {

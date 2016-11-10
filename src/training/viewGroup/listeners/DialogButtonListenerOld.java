@@ -12,36 +12,28 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JDialog;
 import javax.swing.JTextField;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import training.modelGroup.Person;
 import training.modelGroup.ServletsCommunication;
 import training.viewGroup.FaceOfApp;
 import training.viewGroup.MyTableModelNew;
-import training.viewGroup.ModalWindows.AddModalWindow;
-import training.viewGroup.ModalWindows.ChangeModalWindow;
+import training.viewGroup.ModalWindows.DialogWindow;
 import training.viewGroup.ModalWindows.InputErrorModalWindow;
 
-public class ModalWindowsButtonListener implements ActionListener {
+public class DialogButtonListenerOld implements ActionListener {
 
 	private static final String OK_ADD = "okAdd";
 	private static final String OK_CHANGE = "okChange";
-	private static final String CANCEL_ADD = "cancelAdd";
-	private static final String CANCEL_CHANGE = "cancelChange";
+	private static final String CANCEL = "cancel";
 
-	private AddModalWindow addModalWindow;
-	private ChangeModalWindow changeModalWindow;
+	private DialogWindow dialog;
 	private String birth_Day;
 
-	public ModalWindowsButtonListener(AddModalWindow add, ChangeModalWindow change) {
-		this.addModalWindow = add;
-		this.changeModalWindow = change;
-
+	public DialogButtonListenerOld(DialogWindow add) {
+		this.dialog = add;
 	}
 
 	@Override
@@ -57,12 +49,8 @@ public class ModalWindowsButtonListener implements ActionListener {
 			changeButton_Logic();
 			break;
 
-		case CANCEL_ADD:
-			addModalWindow.getAddDialog().setVisible(false);
-			break;
-
-		case CANCEL_CHANGE:
-			changeModalWindow.getChangeDialog().setVisible(false);
+		case CANCEL:
+			dialog.getDialog().setVisible(false);
 			break;
 
 		default:
@@ -74,10 +62,12 @@ public class ModalWindowsButtonListener implements ActionListener {
 		JSONObject addJObject = collectInfo();
 		// Person person = collectInfoNEW();
 		ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
-		repaintAndHide(addModalWindow.getFace(), addModalWindow.getAddDialog());
+		repaintAndHide(dialog.getFace(), dialog.getDialog());
 	}
 
 	private void changeButton_Logic() {
+		Person person = collectInfoNEW();
+		System.out.println(person.toString());
 
 		JSONObject jObject = collectData_new();
 
@@ -89,7 +79,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 				System.out.print(s + ", ");
 			}
 			System.out.println();
-			int user_id = changeModalWindow.getFace().getSelectedUserId();
+			int user_id = dialog.getFace().getSelectedUserId();
 
 			try {
 				jObject.put("user_id", String.valueOf(user_id));
@@ -100,23 +90,22 @@ public class ModalWindowsButtonListener implements ActionListener {
 
 		}
 
-		repaintAndHide(changeModalWindow.getFace(), changeModalWindow.getChangeDialog());
+		repaintAndHide(dialog.getFace(), dialog.getDialog());
 	}
 
-	// to make better or del
+	// to make better or del ???????
 	private JSONObject collectData_new() {
 
 		List<String> newValues = getNewValues();
-		List<String> columnsNames = changeModalWindow.getColumnsNames();
+		List<String> columnsNames = dialog.getColumnsNames();
 		// columnsNames.remove(0); // delete cell "user id"
 
 		JSONObject jObject = new JSONObject();
 		try {
 			for (int i = 0; i < newValues.size(); i++) {
-				if (i == 2 && (newValues.get(i).isEmpty()
-						|| !ModalWindowsButtonListener.checkDateFormat(newValues.get(i)))) {
+				if (i == 2 && (newValues.get(i).isEmpty() || !DialogButtonListenerOld.checkDateFormat(newValues.get(i)))) {
 					jObject.put(columnsNames.get(i), "1970-01-01");
-					new InputErrorModalWindow(changeModalWindow.getChangeDialog());
+					new InputErrorModalWindow(dialog.getDialog());
 				} else {
 					jObject.put(columnsNames.get(i), newValues.get(i));
 				}
@@ -129,8 +118,8 @@ public class ModalWindowsButtonListener implements ActionListener {
 
 	// ??????
 	private JSONObject collectInfo() {
-		ArrayList<JTextField> textFieldsList = addModalWindow.getTextFieldsList();
-		List<String> columnsNames = addModalWindow.getColumnsNames();
+		ArrayList<JTextField> textFieldsList = dialog.getTextFieldsList();
+		List<String> columnsNames = dialog.getColumnsNames();
 		columnsNames.remove(0);
 
 		JSONObject addJObject = new JSONObject();
@@ -143,7 +132,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
 					} else if (!birth_Day.isEmpty() && !checkDateFormat(birth_Day)) {
 						birth_Day = "1970-01-01";
-						new InputErrorModalWindow(addModalWindow.getAddDialog());
+						new InputErrorModalWindow(dialog.getDialog());
 						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
 					} else if (!birth_Day.isEmpty() && checkDateFormat(birth_Day)) {
 						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
@@ -161,7 +150,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 
 	// ????
 	private ArrayList<String> getNewValues() {
-		ArrayList<JTextField> textFieldsList = changeModalWindow.getTextFieldsList();
+		ArrayList<JTextField> textFieldsList = dialog.getTextFieldsList();
 		ArrayList<String> newValues = new ArrayList<>();
 		for (JTextField field : textFieldsList) {
 			newValues.add(field.getText());
@@ -169,10 +158,9 @@ public class ModalWindowsButtonListener implements ActionListener {
 		return newValues;
 	}
 
-	
 	// new!!
 	private Person collectInfoNEW() {
-		ArrayList<JTextField> textFieldsList = addModalWindow.getTextFieldsList();
+		ArrayList<JTextField> textFieldsList = dialog.getTextFieldsList();
 		Map<String, Object> personAsMap = fromFieldsToMap(textFieldsList);
 
 		Person person = new Person();
@@ -196,7 +184,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 	}
 
 	private void fromListToPerson(Person person, ArrayList<Method> setters, Map<String, Object> map) {
-		List<String> columnsNames = addModalWindow.getColumnsNames();
+		List<String> columnsNames = dialog.getColumnsNames();
 
 		for (int i = 0; i < setters.size(); i++) {
 			String methodsName = setters.get(i).getName();
@@ -215,7 +203,7 @@ public class ModalWindowsButtonListener implements ActionListener {
 	}
 
 	private Map<String, Object> fromFieldsToMap(ArrayList<JTextField> list) {
-		List<String> columnsNames = addModalWindow.getColumnsNames();
+		List<String> columnsNames = dialog.getColumnsNames();
 		Map<String, Object> map = new HashMap<>();
 
 		for (JTextField field : list) {

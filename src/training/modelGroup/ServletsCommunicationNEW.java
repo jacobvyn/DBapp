@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,20 +25,26 @@ public class ServletsCommunicationNEW {
 	public static final String DELETE_URL = HOST_AND_PORT + "/DBServlet/dbDelete";
 	public static final String GET_DATA_URL = HOST_AND_PORT + "/DBServlet/dbGetData";
 
-	public static void sendRequest(String httpVerb, JSONObject jObject) {
+	public static void sendRequest(String url, Person person) {
 		try {
-			String parameters = makeQueryFromObject(jObject);
-			String totalQuery = httpVerb + "?" + parameters;
-			URL serverURL = new URL(totalQuery);
+			String jSonString = toJson(person);
+			URL serverURL = new URL(url);
 
 			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
+			OutputStream outputStream = connect.getOutputStream();
+			outputStream.write(jSonString.getBytes());
+			outputStream.close();
 
-			System.out.println("[ServletsCommunication] App: Next query was send : " + totalQuery);
 			printServersAnswer(connect);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String toJson(Person person) {
+		Gson gson = new GsonBuilder().create();
+		return gson.toJson(person);
 	}
 
 	public static List<Person> getData(String url) {

@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import training.modelGroup.*;
-import training.viewGroup.ModalWindows.AddModalWindow;
+import training.viewGroup.ModalWindows.DialogWindow;
 
 public class MyTableModelNew extends AbstractTableModel {
 	private List<String> columnsNames;
@@ -49,7 +49,7 @@ public class MyTableModelNew extends AbstractTableModel {
 		if (columnIndex == 0)
 			return "ID";
 		else
-			return AddModalWindow.makeNice(columnsNames.get(columnIndex));
+			return DialogWindow.makeNice(columnsNames.get(columnIndex));
 	}
 
 	@Override
