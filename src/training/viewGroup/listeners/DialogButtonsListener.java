@@ -12,27 +12,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JDialog;
 import javax.swing.JTextField;
-import org.json.JSONException;
-import org.json.JSONObject;
 import training.modelGroup.Person;
 import training.modelGroup.ServletsCommunication;
-import training.viewGroup.FaceOfApp;
-import training.viewGroup.MyTableModelNew;
+import training.modelGroup.ServletsCommunication.METHOD;
+import training.viewGroup.MyTableModel;
 import training.viewGroup.ModalWindows.DialogWindow;
-import training.viewGroup.ModalWindows.InputErrorModalWindow;
 
-public class DialogButtonListenerOld implements ActionListener {
+public class DialogButtonsListener implements ActionListener {
 
 	private static final String OK_ADD = "okAdd";
 	private static final String OK_CHANGE = "okChange";
 	private static final String CANCEL = "cancel";
 
 	private DialogWindow dialog;
-	private String birth_Day;
 
-	public DialogButtonListenerOld(DialogWindow add) {
+	public DialogButtonsListener(DialogWindow add) {
 		this.dialog = add;
 	}
 
@@ -58,108 +53,31 @@ public class DialogButtonListenerOld implements ActionListener {
 		}
 	}
 
+	/// ---------------------------------------
 	private void addButton_Logic() {
-		JSONObject addJObject = collectInfo();
-		// Person person = collectInfoNEW();
-		ServletsCommunication.makeQueryByURL(ServletsCommunication.ADD_URL, addJObject);
-		repaintAndHide(dialog.getFace(), dialog.getDialog());
+		Person person = collectInformation();
+		ServletsCommunication.sendRequest(person, METHOD.PUT);
+		repaintAndHide();
 	}
 
 	private void changeButton_Logic() {
-		Person person = collectInfoNEW();
-		System.out.println(person.toString());
+		Person person = collectInformation();
+		int user_id = dialog.getFace().getSelectedUserId();
+		person.setId(user_id);
 
-		JSONObject jObject = collectData_new();
+		// check did something change?
+		Person oldPers = dialog.getFace().getTableModel().getPersonByID(user_id);
 
-		if (!(jObject.length() == 0)) {
-
-			System.out.println("Next fields were changed");
-			String[] names = JSONObject.getNames(jObject);
-			for (String s : names) {
-				System.out.print(s + ", ");
-			}
-			System.out.println();
-			int user_id = dialog.getFace().getSelectedUserId();
-
-			try {
-				jObject.put("user_id", String.valueOf(user_id));
-			} catch (JSONException e1) {
-				e1.printStackTrace();
-			}
-			ServletsCommunication.makeQueryByURL(ServletsCommunication.CHANGE_URL, jObject);
-
+		if (!person.equals(oldPers)) {
+			ServletsCommunication.sendRequest(person, METHOD.POST);
+			dialog.getFace().repaint();
 		}
-
-		repaintAndHide(dialog.getFace(), dialog.getDialog());
-	}
-
-	// to make better or del ???????
-	private JSONObject collectData_new() {
-
-		List<String> newValues = getNewValues();
-		List<String> columnsNames = dialog.getColumnsNames();
-		// columnsNames.remove(0); // delete cell "user id"
-
-		JSONObject jObject = new JSONObject();
-		try {
-			for (int i = 0; i < newValues.size(); i++) {
-				if (i == 2 && (newValues.get(i).isEmpty() || !DialogButtonListenerOld.checkDateFormat(newValues.get(i)))) {
-					jObject.put(columnsNames.get(i), "1970-01-01");
-					new InputErrorModalWindow(dialog.getDialog());
-				} else {
-					jObject.put(columnsNames.get(i), newValues.get(i));
-				}
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return jObject;
-	}
-
-	// ??????
-	private JSONObject collectInfo() {
-		ArrayList<JTextField> textFieldsList = dialog.getTextFieldsList();
-		List<String> columnsNames = dialog.getColumnsNames();
-		columnsNames.remove(0);
-
-		JSONObject addJObject = new JSONObject();
-		try {
-			for (int i = 0; i < textFieldsList.size(); i++) {
-				if (i == 2) {
-					birth_Day = textFieldsList.get(i).getText();
-					if (birth_Day.isEmpty()) {
-						birth_Day = "1970-01-01";
-						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
-					} else if (!birth_Day.isEmpty() && !checkDateFormat(birth_Day)) {
-						birth_Day = "1970-01-01";
-						new InputErrorModalWindow(dialog.getDialog());
-						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
-					} else if (!birth_Day.isEmpty() && checkDateFormat(birth_Day)) {
-						addJObject.put(columnsNames.get(i).toUpperCase(), birth_Day);
-					}
-				} else
-					addJObject.put(columnsNames.get(i).toUpperCase(), textFieldsList.get(i).getText());
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		System.out.println(addJObject);
-		return addJObject;
+		dialog.getDialog().setVisible(false);
 
 	}
+	/// ---------------------------------------
 
-	// ????
-	private ArrayList<String> getNewValues() {
-		ArrayList<JTextField> textFieldsList = dialog.getTextFieldsList();
-		ArrayList<String> newValues = new ArrayList<>();
-		for (JTextField field : textFieldsList) {
-			newValues.add(field.getText());
-		}
-		return newValues;
-	}
-
-	// new!!
-	private Person collectInfoNEW() {
+	private Person collectInformation() {
 		ArrayList<JTextField> textFieldsList = dialog.getTextFieldsList();
 		Map<String, Object> personAsMap = fromFieldsToMap(textFieldsList);
 
@@ -254,21 +172,21 @@ public class DialogButtonListenerOld implements ActionListener {
 	private Date parseDate(String toParse) {
 		Date date = null;
 		try {
-			date = MyTableModelNew.FORMATTER.parse(toParse);
+			date = MyTableModel.FORMATTER.parse(toParse);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return date;
 	}
 
-	private void repaintAndHide(FaceOfApp face, JDialog dialog) {
-		face.repaint();
-		dialog.setVisible(false);
+	private void repaintAndHide() {
+		dialog.getFace().repaint();
+		dialog.getDialog().setVisible(false);
 	}
 
 	public static boolean checkDateFormat(String value) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat(MyTableModelNew.DATE_PATTERN);
+		SimpleDateFormat sdf = new SimpleDateFormat(MyTableModel.DATE_PATTERN);
 		Date date = null;
 
 		try {

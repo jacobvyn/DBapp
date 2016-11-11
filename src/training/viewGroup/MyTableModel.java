@@ -1,50 +1,47 @@
 package training.viewGroup;
 
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
 import javax.swing.table.AbstractTableModel;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import training.modelGroup.DataFromDB;
-
+import training.modelGroup.*;
 import training.viewGroup.ModalWindows.DialogWindow;
 
 public class MyTableModel extends AbstractTableModel {
-
 	private List<String> columnsNames;
-	private ArrayList<String[]> dataList;
-	private TreeMap<Integer, ArrayList<String>> resultTreeMap;
-	private int columnCount;
+	private List<String[]> dataTable;
+	private List<Person> list;
+	// for date class formating
+	public static final String DATE_PATTERN = "yyyy-mm-dd";
+	public static final String DEFAULT_DATE = "1970-03-08";
+
+	public static final SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_PATTERN);
 
 	public MyTableModel() {
 		init();
 	}
-	
 
 	private void init() {
-		DataFromDB data = new DataFromDB();
-		resultTreeMap = data.getResultTreeMap();
-		columnsNames = jsonToArrayList(data.getColumnsNames());
-		columnCount = columnsNames.size();
-		dataList = new ArrayList<String[]>();
+		Data data = new Data();
+		columnsNames = data.getColumnsNames();
+		list = data.getList();
+		sortListOfPersons();
+		dataTable = new ArrayList<>();
 		populateTable();
 
 	}
 
 	@Override
 	public int getRowCount() {
-		return dataList.size();
+		return list.size();
 	}
 
 	@Override
 	public int getColumnCount() {
-		return columnCount;
+		return columnsNames.size();
 	}
 
 	@Override
@@ -53,57 +50,112 @@ public class MyTableModel extends AbstractTableModel {
 			return "ID";
 		else
 			return DialogWindow.makeNice(columnsNames.get(columnIndex));
-
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		String[] row = dataList.get(rowIndex);
-		return row[columnIndex];
+		Person person = list.get(rowIndex);
+		Object value = asList(person).get(columnIndex);
+		return value;
+
 	}
 
-	public  String[] getRow(int rowIndex) {
-		String[] row = dataList.get(rowIndex);
+	public String[] getRow(int rowIndex) {
+		Person person = list.get(rowIndex);
+		String[] row = asArray(person);
 		return row;
 
 	}
 
-	private void addData(String[] row) {
-		String[] rowTable = new String[getColumnCount()];
-		rowTable = row;
-		dataList.add(rowTable);
-	}
-
 	public void refreshDataList() {
-		dataList.clear();
+		dataTable.clear();
 		init();
 	}
 
-	private void populateTable() {
-		Set<Entry<Integer, ArrayList<String>>> entries = resultTreeMap.entrySet();
+	public void addData(String[] row) {
+		dataTable.add(row);
+	}
 
-		for (Entry<Integer, ArrayList<String>> entry : entries) {
-			ArrayList<String> row = entry.getValue();
-			addData(row.toArray(new String[row.size()]));
+	public void populateTable() {
+		for (Person person : list) {
+			String[] row = asArray(person);
+			addData(row);
 		}
+	}
+
+	public List<String> getColumnsNames() {
+		return columnsNames;
+	}
+
+	public List<Person> getList() {
+		return list;
+	}
+
+	public String[] asArray(Person person) {
+		String[] array = new String[columnsNames.size()];
+		for (int i = 0; i < columnsNames.size(); i++) {
+			Object value = getValueByPropertyName(columnsNames.get(i), person);
+			array[i] = String.valueOf(value);
+		}
+		return array;
 
 	}
 
-	private ArrayList<String> jsonToArrayList(JSONObject ob) {
-		ArrayList<String> columnNames = new ArrayList<>();
-		// i was 1
-		for (int i = 0; i < ob.length(); i++) {
-			try {
-				columnNames.add(ob.getString(String.valueOf(i)));
-			} catch (JSONException e) {
-				e.printStackTrace();
+	public List<Object> asList(Person person) {
+		List<Object> list = new ArrayList<>();
+		for (String propertyName : columnsNames) {
+			Object value = getValueByPropertyName(propertyName, person);
+			list.add(value);
+		}
+		return list;
+
+	}
+
+	private static Object getValueByPropertyName(String propertyName, Person person) {
+
+		Method[] methods = person.getClass().getDeclaredMethods();
+		for (Method method : methods) {
+			if (method.getName().equalsIgnoreCase("get" + propertyName)) {
+				method.setAccessible(true);
+				try {
+					Object result = method.invoke(person);
+					if (result instanceof Date) {
+						return formateDate(result);
+					}
+					return result;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
 		}
-		return columnNames;
+		return null;
 	}
 
-	public  List<String> getColumnsNames() {
-		return columnsNames;
+	private static String formateDate(Object result) {
+		String formatted_date = FORMATTER.format((Date) result);
+		return formatted_date;
+	}
+
+	private void sortListOfPersons() {
+
+		list.sort(new Comparator<Person>() {
+
+			@Override
+			public int compare(Person p1, Person p2) {
+				return ((Integer) p1.getId()).compareTo(p2.getId());
+			}
+		});
+
+	}
+
+	public Person getPersonByID(int user_id) {
+		for (Person person : list) {
+			if (person.getId() == user_id) {
+				return person;
+			}
+		}
+		return null;
 	}
 
 }

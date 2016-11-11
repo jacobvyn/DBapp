@@ -2,10 +2,9 @@ package training.modelGroup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,95 +17,95 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class ServletsCommunication {
+	public static enum METHOD {
+		GET, PUT, POST, DELETE;
+	}
 
-	public static final String HOST_AND_PORT = "http://localhost:8080";
-	public static final String ADD_URL = HOST_AND_PORT + "/DBServlet/dbAdd";
+	private static final String HOST_AND_PORT = "http://localhost:8080";
 	public static final String CHANGE_URL = HOST_AND_PORT + "/DBServlet/dbChange";
-	public static final String DELETE_URL = HOST_AND_PORT + "/DBServlet/dbDelete";
-	public static final String GET_DATA_URL = HOST_AND_PORT + "/DBServlet/dbGetData";
+	public static final String GET_URL = HOST_AND_PORT + "/DBServlet/dbGetData";
 
-	public static void makeQueryByURL(String httpVerb, JSONObject jObject) {
-		try {
-			String parameters = makeQueryFromObject(jObject);
-			String totalQuery = httpVerb + "?" + parameters;
-			URL serverURL = new URL(totalQuery);
+	public static List<Person> sendRequest(Person person, METHOD method) {
 
-			HttpURLConnection connect = (HttpURLConnection) serverURL.openConnection();
+		switch (method) {
+		case GET:
+			HttpURLConnection connect = openConnection(GET_URL, method);
+			List<Person> list = sendRequestGET(connect);
+			printServersAnswer(connect);
+			return list;
 
-			System.out.println("[ServletsCommunication] App: Next query was send : " + totalQuery);
-			int responseCode = connect.getResponseCode();
-			String responseCodeMessage = connect.getResponseMessage();
-			System.out.println(
-					"[ServletsCommunication]  Answer from server : " + responseCode + " " + responseCodeMessage);
+		case PUT:
+		case POST:
+		case DELETE:
+			HttpURLConnection conn = openConnection(CHANGE_URL, method);
+			sendRequestXXX(conn, person);
+			printServersAnswer(conn);
+			return null;
 
-		} catch (MalformedURLException e) {
-			System.out.println("Bad url  (ServletsCommunication.makeQueryByURL)");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("Exception by opening Connection (ServletsCommunication.makeQueryByURL)");
-			e.printStackTrace();
+		default:
+			return null;
 		}
-	}
-
-	public static JSONArray getDataFromDB(String url) {
-
-		// create url, open connection and print servers answer
-		HttpURLConnection connection = openConnection(url);
-
-		// read data from input stream and return result string
-		String jString = readData(connection);
-
-		JSONArray jsonArr = null;
-		try {
-			jsonArr = new JSONArray(jString.toString());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return jsonArr;
 
 	}
 
-	public static List<Person> getDataFromDbNEW(String url) {
+	// ===================================================
+	private static List<Person> sendRequestGET(HttpURLConnection conn) {
 
-		// create url, open connection and print servers answer
-		HttpURLConnection connection = openConnection(url);
-
-		// read data from input stream and return result string
-		String jString = readData(connection);
-
-		// create json array and convert to the list
+		String jString = readData(conn);
 		List<Person> list = fromJsonStringToList(jString);
-
 		return list;
+
+	}
+
+	private static void sendRequestXXX(HttpURLConnection connection, Person person) {
+		OutputStream outputStream = null;
+		try {
+			outputStream = connection.getOutputStream();
+			log("output stream created");
+			String jsonString = toJson(person);
+			log("Sending message ... " + jsonString);
+			outputStream.write(jsonString.getBytes());
+
+		} catch (IOException e) {
+			log("IOException raised");
+			e.printStackTrace();
+		} finally {
+			try {
+				if (outputStream != null) {
+					outputStream.flush();
+					outputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 
 	// =================================
 
-	private static HttpURLConnection openConnection(String url) {
-
+	private static HttpURLConnection openConnection(String url, METHOD method) {
 		URL serverUrl;
 		HttpURLConnection connection = null;
 
 		try {
 			serverUrl = new URL(url);
 			connection = (HttpURLConnection) serverUrl.openConnection();
-			connection.setDoInput(true);
-			printServersAnswer(connection);
+			connection.setRequestMethod(method.toString());
+			connection.setDoOutput(true);
+			// printServersAnswer(connection);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return connection;
 	}
 
 	private static String readData(HttpURLConnection connection) {
 		StringBuilder jString = null;
 		try {
-
-			InputStream inputStream = connection.getInputStream();
-			InputStreamReader isr = new InputStreamReader(inputStream);
-			BufferedReader br = new BufferedReader(isr);
+			log("goin to create reader");
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			log("reader is created");
 			jString = new StringBuilder();
 			String c;
 
@@ -114,30 +113,10 @@ public class ServletsCommunication {
 				jString.append(c);
 			}
 			br.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return jString.toString();
-	}
-
-	private static String makeQueryFromObject(JSONObject jObject) {
-		StringBuilder query = new StringBuilder();
-		String[] names = JSONObject.getNames(jObject);
-		try {
-			for (String key : names) {
-				String value = String.valueOf(jObject.get(key));
-				query.append(key);
-				query.append("=");
-				query.append(value);
-				query.append("&");
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		query = query.deleteCharAt(query.length() - 1);
-
-		return query.toString();
 	}
 
 	private static List<Person> fromJsonStringToList(String jString) {
@@ -147,14 +126,7 @@ public class ServletsCommunication {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
-		if (jArray == null) {
-			System.out.println("jArray is null");
-			return null;
-		} else {
-			return createListFromJson(jArray);
-		}
-
+		return createListFromJson(jArray);
 	}
 
 	private static List<Person> createListFromJson(JSONArray jArray) {
@@ -175,11 +147,19 @@ public class ServletsCommunication {
 
 	private static void printServersAnswer(HttpURLConnection connection) {
 		try {
-			System.out.println("[ServletsCommunication] Getting data... " + connection.getResponseCode() + " "
-					+ connection.getResponseMessage());
+			System.out.println("=======>>>>>> [ServletsCommunication] Getting data... " + connection.getResponseCode()
+					+ " " + connection.getResponseMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
+	private static String toJson(Person person) {
+		Gson gson = new GsonBuilder().create();
+		return gson.toJson(person);
+	}
+
+	private static void log(String string) {
+		System.out.println("=======>>>>>> " + string);
 	}
 }

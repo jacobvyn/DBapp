@@ -4,13 +4,15 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataFromDBNew {
+import training.modelGroup.ServletsCommunication.METHOD;
+
+public class Data {
 
 	private List<Person> list;
 	private List<String> columnsNames;
 
-	public DataFromDBNew() {
-		list = ServletsCommunicationNEW.getData(ServletsCommunication.GET_DATA_URL);
+	public Data() {
+		list = ServletsCommunication.sendRequest(null, METHOD.GET);
 		setColumnsNames();
 	}
 
@@ -18,7 +20,6 @@ public class DataFromDBNew {
 		Person pers = list.get(0);
 		Field[] fields = pers.getClass().getDeclaredFields();
 		columnsNames = new ArrayList<>();
-		//prevent including id field
 		for (Field field : fields) {
 			columnsNames.add(field.getName());
 		}

@@ -1,18 +1,17 @@
 package training.viewGroup.listeners;
 
 import java.awt.event.ActionEvent;
-
 import java.awt.event.ActionListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import training.modelGroup.Person;
 import training.modelGroup.ServletsCommunication;
+import training.modelGroup.ServletsCommunication.METHOD;
+
 import training.viewGroup.FaceOfApp;
 import training.viewGroup.ModalWindows.*;
 import training.viewGroup.ModalWindows.DialogWindow.MODE;
 
-public class FaceButtonListener implements ActionListener {
+public class FaceButtonsListener implements ActionListener {
 
 	private static final String ADD_BUTTON = "Add";
 	private static final String CHANGE_BUTTON = "Change";
@@ -21,7 +20,7 @@ public class FaceButtonListener implements ActionListener {
 
 	FaceOfApp face;
 
-	public FaceButtonListener(FaceOfApp face) {
+	public FaceButtonsListener(FaceOfApp face) {
 		this.face = face;
 	}
 
@@ -53,17 +52,13 @@ public class FaceButtonListener implements ActionListener {
 	}
 
 	private void deleteLogic(ActionEvent event) {
-		JSONObject jObject = new JSONObject();
+		Person person = new Person();
+		int idToDelete = face.getSelectedUserId();
+		person.setId(idToDelete);
 
-		try {
-			jObject.put("toDelete", face.getSelectedUserId());
-		} catch (JSONException e1) {
-			e1.printStackTrace();
-		}
-
-		ServletsCommunication.makeQueryByURL(ServletsCommunication.DELETE_URL, jObject);
+		ServletsCommunication.sendRequest(person, METHOD.DELETE);
 		face.repaint();
 		face.setSelectedUserIdAndRow();
-		System.out.println("ID #" + (face.getSelectedUserId()) + " is deleted");
+		System.out.println("ID #" + idToDelete + " is deleted");
 	}
 }

@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import training.viewGroup.FaceOfApp;
-import training.viewGroup.MyTableModelNew;
-import training.viewGroup.listeners.DialogButtonListener;
+import training.viewGroup.MyTableModel;
+import training.viewGroup.listeners.DialogButtonsListener;
 import training.viewGroup.listeners.MyCaretListener;
 
 public class DialogWindow {
@@ -41,7 +41,6 @@ public class DialogWindow {
 		columnsNames = face.getTableModel().getColumnsNames();
 
 		init(mode);
-
 	}
 
 	private void init(MODE mode) {
@@ -89,7 +88,7 @@ public class DialogWindow {
 					field.setText("Required");
 				}
 				if (field.getName().contains("day")) {
-					field.setText(MyTableModelNew.DEFAULT_DATE);
+					field.setText(MyTableModel.DEFAULT_DATE);
 				}
 			}
 
@@ -142,7 +141,7 @@ public class DialogWindow {
 		dialog.add(status, new GridBagConstraints(0, lastPosition + 3, 0, 0, 0, 0, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
 
-		DialogButtonListener listener = new DialogButtonListener(this);
+		DialogButtonsListener listener = new DialogButtonsListener(this);
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(listener);
 		okButton.addActionListener(listener);

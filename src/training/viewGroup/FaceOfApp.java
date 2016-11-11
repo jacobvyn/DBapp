@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import training.viewGroup.listeners.FaceButtonListener;
+import training.viewGroup.listeners.FaceButtonsListener;
 
 public class FaceOfApp extends JFrame {
 	private JButton add;
@@ -27,11 +27,11 @@ public class FaceOfApp extends JFrame {
 	private int selectedUserId;
 	private int selectedRow;
 
-	private MyTableModelNew tableModel;
+	private MyTableModel tableModel;
 	private JTable table;
 
 	private void createTable() {
-		tableModel = new MyTableModelNew();
+		tableModel = new MyTableModel();
 		table = new JTable(tableModel);
 
 		JPanel paneltable = new JPanel();
@@ -55,6 +55,7 @@ public class FaceOfApp extends JFrame {
 		setSelectedUserIdAndRow();
 		this.setVisible(true);
 		this.pack();
+		System.out.println("-------------- Aplication is created---------------------");
 	}
 
 	private void createButtons() {
@@ -64,7 +65,7 @@ public class FaceOfApp extends JFrame {
 		exit = new JButton("Exit");
 		countOfRecords = new JLabel();
 
-		FaceButtonListener listener = new FaceButtonListener(this);
+		FaceButtonsListener listener = new FaceButtonsListener(this);
 		change.addActionListener(listener);
 		add.addActionListener(listener);
 		del.addActionListener(listener);
@@ -99,7 +100,7 @@ public class FaceOfApp extends JFrame {
 		});
 	}
 
-	public MyTableModelNew getTableModel() {
+	public MyTableModel getTableModel() {
 		return tableModel;
 	}
 
