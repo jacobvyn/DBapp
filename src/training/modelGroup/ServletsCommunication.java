@@ -103,9 +103,9 @@ public class ServletsCommunication {
 	private static String readData(HttpURLConnection connection) {
 		StringBuilder jString = null;
 		try {
-			log("goin to create reader");
+			// log("goin to create reader");
 			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			log("reader is created");
+			// log("reader is created");
 			jString = new StringBuilder();
 			String c;
 
@@ -162,4 +162,5 @@ public class ServletsCommunication {
 	private static void log(String string) {
 		System.out.println("=======>>>>>> " + string);
 	}
+
 }

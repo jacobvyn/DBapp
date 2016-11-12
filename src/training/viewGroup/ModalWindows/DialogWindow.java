@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import training.viewGroup.FaceOfApp;
 import training.viewGroup.MyTableModel;
 import training.viewGroup.listeners.DialogButtonsListener;
-import training.viewGroup.listeners.MyCaretListener;
 
 public class DialogWindow {
 
@@ -44,7 +43,7 @@ public class DialogWindow {
 	}
 
 	private void init(MODE mode) {
-
+		
 		dialog = new JDialog(face, true);
 		dialog.setLayout(new GridBagLayout());
 
@@ -131,7 +130,7 @@ public class DialogWindow {
 		int lastPosition = columnsNames.size();
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
-		status = new JLabel("Status : clear");
+		status = new JLabel("Hint : the date format should be \"yyyy-mm-dd\"");
 
 		dialog.add(okButton, new GridBagConstraints(0, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
@@ -145,8 +144,6 @@ public class DialogWindow {
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(listener);
 		okButton.addActionListener(listener);
-
-		textFieldsList.get(2).addCaretListener(new MyCaretListener(textFieldsList.get(2), status));
 
 	}
 
