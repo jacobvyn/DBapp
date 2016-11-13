@@ -1,5 +1,6 @@
 package training.viewGroup.listeners;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JTextField;
+
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import training.modelGroup.Person;
 import training.modelGroup.ServletsCommunication;
 import training.modelGroup.ServletsCommunication.METHOD;
@@ -78,7 +81,7 @@ public class DialogButtonsListener implements ActionListener {
 	/// ---------------------------------------
 
 	private Person collectInformation() {
-		ArrayList<JTextField> textFieldsList = dialog.getTextFieldsList();
+		ArrayList<Component> textFieldsList = dialog.getTextFieldsList();
 		Map<String, Object> personAsMap = fromFieldsToMap(textFieldsList);
 
 		Person person = new Person();
@@ -120,16 +123,26 @@ public class DialogButtonsListener implements ActionListener {
 
 	}
 
-	private Map<String, Object> fromFieldsToMap(ArrayList<JTextField> list) {
+	private Map<String, Object> fromFieldsToMap(ArrayList<Component> textFieldslist) {
 		List<String> columnsNames = dialog.getColumnsNames();
 		Map<String, Object> map = new HashMap<>();
 
-		for (JTextField field : list) {
+		for (Component field : textFieldslist) {
+			Object value = null;
+
+			if (field instanceof JDatePickerImpl) {
+				Date date = (Date) ((JDatePickerImpl) field).getModel().getValue();
+				value = dateToString(date);
+
+			} else if (field instanceof JTextField) {
+				value = ((JTextField) field).getText();
+			}
+
 			String fieldName = field.getName().toLowerCase();
 
 			for (String propertyKey : columnsNames) {
 				if (fieldName.equalsIgnoreCase(propertyKey)) {
-					Object value = field.getText();
+
 					if (propertyKey.toLowerCase().contains("day")) {
 						parseDate(propertyKey, value, map);
 					} else {
@@ -140,6 +153,11 @@ public class DialogButtonsListener implements ActionListener {
 			}
 		}
 		return map;
+	}
+
+	private Object dateToString(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat(MyTableModel.DATE_PATTERN);
+		return sdf.format(date);
 	}
 
 	private void invokeMethod(Person person, Method method, Object object) {
@@ -199,4 +217,5 @@ public class DialogButtonsListener implements ActionListener {
 		}
 		return date != null;
 	}
+
 }

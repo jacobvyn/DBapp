@@ -15,10 +15,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import javafx.scene.control.DatePicker;
-import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
-import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
-import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import training.viewGroup.listeners.FaceButtonsListener;
 
 public class FaceOfApp extends JFrame {
@@ -84,15 +80,9 @@ public class FaceOfApp extends JFrame {
 		buttons.add(del);
 		buttons.add(exit);
 		buttons.add(countOfRecords);
-		//*************
-		UtilDateModel mod = new UtilDateModel();
-		JDatePanelImpl panel = new JDatePanelImpl(mod);
-		JDatePickerImpl piker = new JDatePickerImpl(panel);
-		
-		buttons.add(piker);
-		//**********
+
 		this.add(buttons, BorderLayout.SOUTH);
-		
+
 	}
 
 	public void setSelectedUserIdAndRow() {
@@ -105,7 +95,6 @@ public class FaceOfApp extends JFrame {
 				int[] selectedRows = table.getSelectedRows();
 				selectedRow = selectedRows[0];
 				Object id = tableModel.getValueAt(selectedRow, 0);
-				// selectedUserId = Integer.valueOf((String)id);
 				selectedUserId = (int) id;
 			}
 		});

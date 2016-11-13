@@ -1,5 +1,6 @@
 package training.viewGroup.ModalWindows;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 
 import java.awt.GridBagLayout;
@@ -13,6 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import training.viewGroup.FaceOfApp;
 import training.viewGroup.MyTableModel;
 import training.viewGroup.listeners.DialogButtonsListener;
@@ -27,7 +31,8 @@ public class DialogWindow {
 	private JDialog dialog;
 
 	private ArrayList<JLabel> labelsList;
-	private ArrayList<JTextField> textFieldsList;
+	// 1
+	private ArrayList<Component> textFieldsList;
 	private List<String> columnsNames;
 
 	private JLabel status;
@@ -43,7 +48,7 @@ public class DialogWindow {
 	}
 
 	private void init(MODE mode) {
-		
+
 		dialog = new JDialog(face, true);
 		dialog.setLayout(new GridBagLayout());
 
@@ -53,23 +58,8 @@ public class DialogWindow {
 		createLabelsAndTextFields();
 		createButtons();
 
-		switch (mode) {
-
-		case ADD:
-			dialog.setTitle("New person");
-			populateTextFields(mode);
-			okButton.setActionCommand("okAdd");
-			break;
-
-		case CHANGE:
-			dialog.setTitle("What information  would you like to change?");
-			populateTextFields(mode);
-			okButton.setActionCommand("okChange");
-			break;
-
-		default:
-			break;
-		}
+		setTitleByMode(mode);
+		populateTextFields(mode);
 
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dialog.setSize(450, 250);
@@ -78,16 +68,40 @@ public class DialogWindow {
 
 	}
 
+	private void setTitleByMode(MODE mode) {
+		switch (mode) {
+
+		case ADD:
+			dialog.setTitle("New person");
+			okButton.setActionCommand("okAdd");
+			break;
+
+		case CHANGE:
+			dialog.setTitle("What information  would you like to change?");
+			okButton.setActionCommand("okChange");
+			break;
+
+		default:
+			break;
+		}
+
+	}
+
 	private void populateTextFields(MODE mode) {
 		switch (mode) {
 		case ADD:
+			// 2
+			for (Component component : textFieldsList) {
 
-			for (JTextField field : textFieldsList) {
-				if (field.getName().contains("First")) {
-					field.setText("Required");
-				}
-				if (field.getName().contains("day")) {
-					field.setText(MyTableModel.DEFAULT_DATE);
+				if (component instanceof JTextField) {
+					JTextField field = (JTextField) component;
+					if (field.getName().contains("First")) {
+						field.setText("Required");
+					}
+					/*
+					 * if (field.getName().contains("day")) {
+					 * field.setText(MyTableModel.DEFAULT_DATE); }
+					 */
 				}
 			}
 
@@ -95,13 +109,51 @@ public class DialogWindow {
 		case CHANGE:
 			personTochange = face.getSelectedPerson();
 			for (int i = 0; i < textFieldsList.size(); i++) {
-				textFieldsList.get(i).setText(personTochange[i + 1]);
+				Component component = textFieldsList.get(i);
+				if (component instanceof JTextField) {
+					JTextField field = (JTextField) component;
+					field.setText(personTochange[i + 1]);
+				} else if (component instanceof JDatePickerImpl) {
+					JDatePickerImpl picker = (JDatePickerImpl) component;
+					String date = personTochange[i + 1];
+					if (!date.equals(MyTableModel.DEFAULT_DATE)) {
+						int year = getInt(date, "y");
+						int mounth = getInt(date, "m");
+						int day = getInt(date, "d");
+						picker.getModel().setDate(year, mounth, day);
+						System.out.println(picker.getModel().getValue());
+					}
+				}
+
 			}
 			break;
 
 		default:
 			break;
 		}
+
+	}
+
+	private int getInt(String date, String what) {
+		String str = null;
+		switch (what) {
+		case "y":
+			str = (String) date.subSequence(0, 4);
+			break;
+		case "m":
+			str = (String) date.subSequence(5, 7);
+			break;
+		case "d":
+			str = (String) date.subSequence(8, 10);
+			break;
+
+		default:
+			break;
+		}
+
+		int value = Integer.valueOf(str);
+		return value;
+
 	}
 
 	private void createLabelsAndTextFields() {
@@ -112,9 +164,16 @@ public class DialogWindow {
 		for (int i = 1; i < fieldsAmount; i++) {
 			String name = DialogWindow.makeNice(columnsNames.get(i));
 			labelsList.add(new JLabel(name));
-			JTextField field = new JTextField(15);
-			field.setName(name);
-			textFieldsList.add(field);
+			if (name.contains("day")) {
+				JDatePickerImpl picker = createPicker();
+				picker.setName(name);
+				textFieldsList.add(picker);
+			} else {
+				JTextField field = new JTextField(15);
+				field.setName(name);
+				textFieldsList.add(field);
+			}
+
 		}
 
 		// putt all to the layout
@@ -130,7 +189,7 @@ public class DialogWindow {
 		int lastPosition = columnsNames.size();
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
-		status = new JLabel("Hint : the date format should be \"yyyy-mm-dd\"");
+		status = new JLabel("Hint : the date format should be " + MyTableModel.DATE_PATTERN);
 
 		dialog.add(okButton, new GridBagConstraints(0, lastPosition + 2, 1, 1, 1, 1, GridBagConstraints.NORTH,
 				GridBagConstraints.BOTH, new Insets(3, 3, 3, 3), 0, 0));
@@ -160,7 +219,7 @@ public class DialogWindow {
 		return face;
 	}
 
-	public ArrayList<JTextField> getTextFieldsList() {
+	public ArrayList<Component> getTextFieldsList() {
 		return textFieldsList;
 	}
 
@@ -168,4 +227,12 @@ public class DialogWindow {
 		return columnsNames;
 	}
 
+	private JDatePickerImpl createPicker() {
+		UtilDateModel mod = new UtilDateModel();
+		mod.setDate(1970, 0, 1);
+		mod.setSelected(true);
+		JDatePanelImpl panel = new JDatePanelImpl(mod);
+		JDatePickerImpl picker = new JDatePickerImpl(panel, new DateLabelFormatter());
+		return picker;
+	}
 }
