@@ -71,6 +71,7 @@ public class Person {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+		
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public class MyTableModel extends AbstractTableModel {
 	private List<String[]> dataTable;
 	private List<Person> list;
 	// for date class formating
-	public static final String DATE_PATTERN = "yyyy-mm-dd";
+	public static final String DATE_PATTERN = "yyyy-MM-dd";
 	public static final String DEFAULT_DATE = "1970-01-01";
 
 	public static final SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_PATTERN);

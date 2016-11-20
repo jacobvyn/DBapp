@@ -1,6 +1,7 @@
 package training.modelGroup;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -21,9 +22,9 @@ public class ServletsCommunication {
 		GET, PUT, POST, DELETE;
 	}
 
-	private static final String HOST_AND_PORT = "http://localhost:8080";
-	public static final String CHANGE_URL = HOST_AND_PORT + "/DBServlet/dbChange";
-	public static final String GET_URL = HOST_AND_PORT + "/DBServlet/dbGetData";
+	private static final String HOST_AND_PORT = "http://localhost:8080/DBServlet";
+	public static final String CHANGE_URL = HOST_AND_PORT + "/dbChange";
+	public static final String GET_URL = HOST_AND_PORT + "/dbGetData";
 
 	public static List<Person> sendRequest(Person person, METHOD method) {
 
@@ -31,6 +32,10 @@ public class ServletsCommunication {
 		case GET:
 			HttpURLConnection connect = openConnection(GET_URL, method);
 			List<Person> list = sendRequestGET(connect);
+			//////////////////// --------------------------------------------------------
+
+			System.out.println(list.get(0).toString());
+
 			printServersAnswer(connect);
 			return list;
 
@@ -52,6 +57,9 @@ public class ServletsCommunication {
 	private static List<Person> sendRequestGET(HttpURLConnection conn) {
 
 		String jString = readData(conn);
+		//////////////////// --------------------------------------------------------
+		System.out.println(jString);
+
 		List<Person> list = fromJsonStringToList(jString);
 		return list;
 
@@ -93,7 +101,6 @@ public class ServletsCommunication {
 			connection = (HttpURLConnection) serverUrl.openConnection();
 			connection.setRequestMethod(method.toString());
 			connection.setDoOutput(true);
-			// printServersAnswer(connection);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,9 +110,7 @@ public class ServletsCommunication {
 	private static String readData(HttpURLConnection connection) {
 		StringBuilder jString = null;
 		try {
-			// log("goin to create reader");
 			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			// log("reader is created");
 			jString = new StringBuilder();
 			String c;
 
@@ -131,7 +136,8 @@ public class ServletsCommunication {
 
 	private static List<Person> createListFromJson(JSONArray jArray) {
 		List<Person> list = new ArrayList<>();
-		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd").create();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		// "yyyy-MM-dd"
 		for (int i = 0; i < jArray.length(); i++) {
 			JSONObject record;
 			try {

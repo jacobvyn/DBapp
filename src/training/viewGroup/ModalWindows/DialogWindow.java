@@ -98,10 +98,6 @@ public class DialogWindow {
 					if (field.getName().contains("First")) {
 						field.setText("Required");
 					}
-					/*
-					 * if (field.getName().contains("day")) {
-					 * field.setText(MyTableModel.DEFAULT_DATE); }
-					 */
 				}
 			}
 
@@ -120,8 +116,7 @@ public class DialogWindow {
 						int year = getInt(date, "y");
 						int mounth = getInt(date, "m");
 						int day = getInt(date, "d");
-						picker.getModel().setDate(year, mounth, day);
-						System.out.println(picker.getModel().getValue());
+						picker.getModel().setDate(year, mounth - 1, day);
 					}
 				}
 
